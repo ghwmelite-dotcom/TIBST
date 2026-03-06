@@ -61,6 +61,9 @@ $flash = getFlashMessage();
             <a href="/admin/staff.php" class="<?= $adminActivePage === 'staff' ? 'active' : '' ?>">
                 <span class="nav-icon">&#9823;</span> Staff
             </a>
+            <a href="/admin/applications.php" class="<?= $adminActivePage === 'applications' ? 'active' : '' ?>">
+                <span class="nav-icon">&#9993;</span> Applications
+            </a>
             <a href="/admin/pages.php" class="<?= $adminActivePage === 'pages' ? 'active' : '' ?>">
                 <span class="nav-icon">&#9776;</span> Page Content
             </a>

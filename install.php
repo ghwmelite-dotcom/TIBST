@@ -19,10 +19,13 @@ $alreadyInstalled = file_exists(__DIR__ . '/includes/config.php');
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstalled) {
+    $setupMode  = $_POST['setup_mode'] ?? 'shared';
     $dbHost     = trim($_POST['db_host'] ?? '');
     $dbName     = trim($_POST['db_name'] ?? '');
     $dbUser     = trim($_POST['db_user'] ?? '');
     $dbPass     = $_POST['db_pass'] ?? '';
+    $rootUser   = trim($_POST['root_user'] ?? '');
+    $rootPass   = $_POST['root_pass'] ?? '';
     $adminName  = trim($_POST['admin_name'] ?? '');
     $adminEmail = trim($_POST['admin_email'] ?? '');
     $adminPass  = $_POST['admin_pass'] ?? '';
@@ -31,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstalled) {
     if ($dbHost === '')     $errors[] = 'Database host is required.';
     if ($dbName === '')     $errors[] = 'Database name is required.';
     if ($dbUser === '')     $errors[] = 'Database username is required.';
+    if ($setupMode === 'vps' && $dbPass === '') $errors[] = 'Database user password is required in VPS mode (used to create the user).';
+    if ($setupMode === 'vps' && $rootUser === '') $errors[] = 'MySQL root username is required in VPS mode.';
     if ($adminName === '')  $errors[] = 'Admin name is required.';
     if ($adminEmail === '') $errors[] = 'Admin email is required.';
     if ($adminPass === '')  $errors[] = 'Admin password is required.';
@@ -38,20 +43,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstalled) {
 
     if (empty($errors)) {
         try {
-            // ── Connect to MySQL (without selecting a database) ─
-            $pdo = new PDO(
-                "mysql:host={$dbHost};charset=utf8mb4",
-                $dbUser,
-                $dbPass,
-                [
-                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                ]
-            );
+            if ($setupMode === 'vps') {
+                // ── VPS Mode: connect as root, create user + database ─
+                $pdo = new PDO(
+                    "mysql:host={$dbHost};charset=utf8mb4",
+                    $rootUser,
+                    $rootPass,
+                    [
+                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    ]
+                );
 
-            // ── Create the database if it doesn't exist ─────────
-            $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            $pdo->exec("USE `{$dbName}`");
+                // Create database
+                $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+
+                // Create user and grant privileges
+                $escapedUser = $pdo->quote($dbUser);
+                $escapedPass = $pdo->quote($dbPass);
+                $pdo->exec("CREATE USER IF NOT EXISTS {$escapedUser}@'localhost' IDENTIFIED BY {$escapedPass}");
+                $pdo->exec("GRANT ALL PRIVILEGES ON `{$dbName}`.* TO {$escapedUser}@'localhost'");
+                $pdo->exec("FLUSH PRIVILEGES");
+
+                // Reconnect as the new user
+                $pdo = null;
+                $pdo = new PDO(
+                    "mysql:host={$dbHost};dbname={$dbName};charset=utf8mb4",
+                    $dbUser,
+                    $dbPass,
+                    [
+                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    ]
+                );
+            } else {
+                // ── Shared Hosting Mode: connect with provided credentials ─
+                $pdo = new PDO(
+                    "mysql:host={$dbHost};charset=utf8mb4",
+                    $dbUser,
+                    $dbPass,
+                    [
+                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    ]
+                );
+
+                // Create the database if it doesn't exist
+                $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+                $pdo->exec("USE `{$dbName}`");
+            }
 
             // ── Create tables ───────────────────────────────────
             $tables = [
@@ -137,6 +177,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstalled) {
                     content LONGTEXT,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     UNIQUE KEY page_block (page, block_id)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+                "CREATE TABLE IF NOT EXISTS applications (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    first_name VARCHAR(100) NOT NULL,
+                    last_name VARCHAR(100) NOT NULL,
+                    middle_name VARCHAR(100),
+                    date_of_birth DATE NOT NULL,
+                    gender ENUM('Male', 'Female') NOT NULL,
+                    place_of_birth VARCHAR(150) NOT NULL,
+                    nationality VARCHAR(100) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    phone VARCHAR(50) NOT NULL,
+                    street_address VARCHAR(255) NOT NULL,
+                    address_line_2 VARCHAR(255),
+                    city VARCHAR(100) NOT NULL,
+                    state_region VARCHAR(100),
+                    postal_code VARCHAR(20),
+                    country VARCHAR(100) NOT NULL,
+                    marital_status VARCHAR(20),
+                    photo VARCHAR(500),
+                    qualification_1 VARCHAR(255) NOT NULL,
+                    school_date_1 VARCHAR(255) NOT NULL,
+                    qualification_2 VARCHAR(255),
+                    school_date_2 VARCHAR(255),
+                    qualification_3 VARCHAR(255),
+                    school_date_3 VARCHAR(255),
+                    currently_employed ENUM('Yes', 'No') NOT NULL,
+                    designation VARCHAR(255),
+                    employer_details TEXT,
+                    criminal_conviction ENUM('Yes', 'No') NOT NULL,
+                    conviction_details TEXT,
+                    sponsor ENUM('Self', 'Parent', 'Employer', 'Other') NOT NULL,
+                    next_of_kin_name VARCHAR(150) NOT NULL,
+                    next_of_kin_address VARCHAR(255) NOT NULL,
+                    next_of_kin_phone VARCHAR(50) NOT NULL,
+                    programme_type ENUM('postgraduate', 'certificate') NOT NULL,
+                    programme_choice VARCHAR(255) NOT NULL,
+                    cv_file VARCHAR(500) NOT NULL,
+                    certificates_file VARCHAR(500) NOT NULL,
+                    transcripts_file VARCHAR(500) NOT NULL,
+                    reference_file VARCHAR(500) NOT NULL,
+                    personal_statement_file VARCHAR(500) NOT NULL,
+                    payment_proof_file VARCHAR(500) NOT NULL,
+                    status ENUM('pending', 'reviewed', 'accepted', 'rejected') DEFAULT 'pending',
+                    admin_notes TEXT,
+                    agreed_terms TINYINT(1) DEFAULT 0,
+                    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
             ];
 
@@ -527,6 +615,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstalled) {
                 <?php endif; ?>
 
                 <form method="POST" action="">
+                    <div class="section-title">Hosting Environment</div>
+
+                    <div class="form-group">
+                        <label>Server Type</label>
+                        <div style="display:flex; gap:1rem; margin-top:0.25rem;">
+                            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-weight:400;">
+                                <input type="radio" name="setup_mode" value="shared" <?= ($_POST['setup_mode'] ?? 'shared') === 'shared' ? 'checked' : '' ?> onchange="toggleVpsFields()">
+                                Shared Hosting <small style="color:#888;">(cPanel)</small>
+                            </label>
+                            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-weight:400;">
+                                <input type="radio" name="setup_mode" value="vps" <?= ($_POST['setup_mode'] ?? '') === 'vps' ? 'checked' : '' ?> onchange="toggleVpsFields()">
+                                VPS / Dedicated <small style="color:#888;">(auto-create user)</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="vps-fields" style="display:<?= ($_POST['setup_mode'] ?? 'shared') === 'vps' ? 'block' : 'none' ?>; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:1rem; margin-bottom:1rem;">
+                        <div style="font-size:0.8rem; color:#1e40af; margin-bottom:0.75rem; font-weight:500;">MySQL root credentials — used only to create the database user, then discarded.</div>
+                        <div class="form-row">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="root_user">MySQL Root Username</label>
+                                <input type="text" id="root_user" name="root_user" value="<?= htmlspecialchars($_POST['root_user'] ?? 'root') ?>">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label for="root_pass">MySQL Root Password</label>
+                                <input type="password" id="root_pass" name="root_pass" value="">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="section-title">Database Connection</div>
 
                     <div class="form-row">
@@ -542,11 +660,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstalled) {
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="db_user">Database Username</label>
+                            <label for="db_user" id="db_user_label">Database Username</label>
                             <input type="text" id="db_user" name="db_user" value="<?= htmlspecialchars($_POST['db_user'] ?? '') ?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="db_pass">Database Password</label>
+                            <label for="db_pass" id="db_pass_label">Database Password</label>
                             <input type="password" id="db_pass" name="db_pass" value="">
                         </div>
                     </div>
@@ -574,5 +692,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstalled) {
             <?php endif; ?>
         </div>
     </div>
+<script>
+function toggleVpsFields() {
+    var mode = document.querySelector('input[name="setup_mode"]:checked').value;
+    var vpsFields = document.getElementById('vps-fields');
+    var userLabel = document.getElementById('db_user_label');
+    var passLabel = document.getElementById('db_pass_label');
+    vpsFields.style.display = mode === 'vps' ? 'block' : 'none';
+    userLabel.textContent = mode === 'vps' ? 'New Database Username' : 'Database Username';
+    passLabel.textContent = mode === 'vps' ? 'New Database Password' : 'Database Password';
+}
+</script>
 </body>
 </html>

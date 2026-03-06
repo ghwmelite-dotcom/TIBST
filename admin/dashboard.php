@@ -12,10 +12,18 @@ $pdo = getDB();
 
 // Gather counts
 $counts = [];
-$tables = ['hero_slides', 'programmes', 'news', 'testimonials', 'staff'];
+$tables = ['hero_slides', 'programmes', 'news', 'testimonials', 'staff', 'applications'];
 foreach ($tables as $t) {
-    $counts[$t] = (int) $pdo->query("SELECT COUNT(*) FROM {$t}")->fetchColumn();
+    try {
+        $counts[$t] = (int) $pdo->query("SELECT COUNT(*) FROM {$t}")->fetchColumn();
+    } catch (PDOException $e) {
+        $counts[$t] = 0;
+    }
 }
+$pendingApps = 0;
+try {
+    $pendingApps = (int) $pdo->query("SELECT COUNT(*) FROM applications WHERE status = 'pending'")->fetchColumn();
+} catch (PDOException $e) {}
 if (isAdmin()) {
     $counts['users'] = (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 }
@@ -57,6 +65,13 @@ if (isAdmin()) {
             <div class="stat-card-label">Staff Members</div>
         </div>
     </div>
+    <a href="/admin/applications.php" class="stat-card" style="text-decoration:none; color:inherit;">
+        <div class="stat-card-icon amber">&#9993;</div>
+        <div class="stat-card-info">
+            <div class="stat-card-number"><?= $counts['applications'] ?></div>
+            <div class="stat-card-label">Applications<?php if ($pendingApps): ?> <span style="font-size:0.75rem; color:#f59e0b;">(<?= $pendingApps ?> pending)</span><?php endif; ?></div>
+        </div>
+    </a>
     <?php if (isAdmin()): ?>
     <div class="stat-card">
         <div class="stat-card-icon rose">&#9731;</div>
@@ -92,6 +107,13 @@ if (isAdmin()) {
             <div>
                 <div class="quick-action-label">Add Programme</div>
                 <div class="quick-action-sublabel">Academic Offerings</div>
+            </div>
+        </a>
+        <a href="/admin/applications.php?status=pending" class="quick-action-card">
+            <div class="quick-action-icon">&#9993;</div>
+            <div>
+                <div class="quick-action-label">Review Apps</div>
+                <div class="quick-action-sublabel"><?= $pendingApps ?> Pending</div>
             </div>
         </a>
     </div>

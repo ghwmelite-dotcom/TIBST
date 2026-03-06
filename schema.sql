@@ -157,3 +157,61 @@ INSERT INTO testimonials (quote, name, role, initials, sort_order, is_active) VA
 ('TIBST has provided me with an exceptional learning environment. The faculty are dedicated, the research facilities are outstanding, and the curriculum is truly world-class.', 'Dr. Ama Kusi', 'MPhil Gene Therapy Graduate', 'AK', 1, 1),
 ('Studying at TIBST transformed my understanding of biomedical science. The hands-on research experience and mentorship I received were invaluable for my career.', 'Kwame Mensah', 'PhD Candidate, Gene Therapy', 'KM', 2, 1),
 ('The Human Embryology programme at TIBST is rigorous and deeply rewarding. I feel well-prepared to contribute meaningfully to reproductive science research.', 'Dr. Efua Aidoo', 'MPhil Human Embryology Graduate', 'EA', 3, 1);
+
+-- --------------------------------------------------------
+-- Applications
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS applications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    -- Personal Info
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    middle_name VARCHAR(100),
+    date_of_birth DATE NOT NULL,
+    gender ENUM('Male', 'Female') NOT NULL,
+    place_of_birth VARCHAR(150) NOT NULL,
+    nationality VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    street_address VARCHAR(255) NOT NULL,
+    address_line_2 VARCHAR(255),
+    city VARCHAR(100) NOT NULL,
+    state_region VARCHAR(100),
+    postal_code VARCHAR(20),
+    country VARCHAR(100) NOT NULL,
+    marital_status VARCHAR(20),
+    photo VARCHAR(500),
+    -- Education
+    qualification_1 VARCHAR(255) NOT NULL,
+    school_date_1 VARCHAR(255) NOT NULL,
+    qualification_2 VARCHAR(255),
+    school_date_2 VARCHAR(255),
+    qualification_3 VARCHAR(255),
+    school_date_3 VARCHAR(255),
+    -- Employment
+    currently_employed ENUM('Yes', 'No') NOT NULL,
+    designation VARCHAR(255),
+    employer_details TEXT,
+    criminal_conviction ENUM('Yes', 'No') NOT NULL,
+    conviction_details TEXT,
+    -- Sponsorship
+    sponsor ENUM('Self', 'Parent', 'Employer', 'Other') NOT NULL,
+    next_of_kin_name VARCHAR(150) NOT NULL,
+    next_of_kin_address VARCHAR(255) NOT NULL,
+    next_of_kin_phone VARCHAR(50) NOT NULL,
+    -- Programme
+    programme_type ENUM('postgraduate', 'certificate') NOT NULL,
+    programme_choice VARCHAR(255) NOT NULL,
+    -- File uploads
+    cv_file VARCHAR(500) NOT NULL,
+    certificates_file VARCHAR(500) NOT NULL,
+    transcripts_file VARCHAR(500) NOT NULL,
+    reference_file VARCHAR(500) NOT NULL,
+    personal_statement_file VARCHAR(500) NOT NULL,
+    payment_proof_file VARCHAR(500) NOT NULL,
+    -- Meta
+    status ENUM('pending', 'reviewed', 'accepted', 'rejected') DEFAULT 'pending',
+    admin_notes TEXT,
+    agreed_terms TINYINT(1) DEFAULT 0,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

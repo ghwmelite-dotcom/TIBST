@@ -215,6 +215,72 @@ function uploadImage(string $fileInputName): string|false
 }
 
 /**
+ * Upload a document file from a form file input.
+ *
+ * Accepts images, PDFs, and Word documents up to 10 MB.
+ *
+ * @param  string       $fileInputName  The name attribute of the file input.
+ * @return string|false Relative URL path on success, false on failure.
+ */
+function uploadDocument(string $fileInputName): string|false
+{
+    if (!isset($_FILES[$fileInputName]) || $_FILES[$fileInputName]['error'] !== UPLOAD_ERR_OK) {
+        return false;
+    }
+
+    $file     = $_FILES[$fileInputName];
+    $tmpPath  = $file['tmp_name'];
+    $origName = $file['name'];
+    $size     = $file['size'];
+
+    // Max 10 MB
+    $maxSize = 10 * 1024 * 1024;
+    if ($size > $maxSize) {
+        return false;
+    }
+
+    // Allowed extensions
+    $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx'];
+    $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+    if (!in_array($ext, $allowedExts, true)) {
+        return false;
+    }
+
+    // MIME type check
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime  = finfo_file($finfo, $tmpPath);
+    finfo_close($finfo);
+
+    $allowedMimes = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    if (!in_array($mime, $allowedMimes, true)) {
+        return false;
+    }
+
+    // Create upload directory if needed
+    if (!is_dir(UPLOAD_DIR)) {
+        mkdir(UPLOAD_DIR, 0755, true);
+    }
+
+    // Generate a unique filename
+    $newName  = uniqid('doc_', true) . '.' . $ext;
+    $destPath = rtrim(UPLOAD_DIR, '/\\') . '/' . $newName;
+
+    if (!move_uploaded_file($tmpPath, $destPath)) {
+        return false;
+    }
+
+    return UPLOAD_URL . $newName;
+}
+
+/**
  * Delete an uploaded image file.
  *
  * Prevents directory traversal by ensuring the path starts with UPLOAD_URL.
