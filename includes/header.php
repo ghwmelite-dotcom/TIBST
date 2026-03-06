@@ -48,6 +48,8 @@ $youtube   = escape($settings['youtube']   ?? 'https://youtube.com');
       <div style="display:flex; gap:16px; align-items:center;">
         <a href="library.php">Library</a>
         <a href="news-events.php">Blog</a>
+        <a href="gallery.php">Gallery</a>
+        <a href="support.php">Support Thrivus</a>
         <a href="portal.php">Portal</a>
         <div style="display:flex; gap:10px; margin-left:8px;">
           <a href="<?= $facebook ?>" target="_blank" aria-label="Facebook">
@@ -90,6 +92,8 @@ $youtube   = escape($settings['youtube']   ?? 'https://youtube.com');
               <li><a href="about.php#academic-staff">Academic Staff</a></li>
               <li><a href="about.php#administration">Administration</a></li>
               <li><a href="student-life.php">Life at TIBST</a></li>
+              <li><a href="gallery.php">Gallery</a></li>
+              <li><a href="careers.php">Join Our Team</a></li>
             </ul>
           </li>
           <li class="dropdown">
@@ -99,10 +103,16 @@ $youtube   = escape($settings['youtube']   ?? 'https://youtube.com');
               <li><a href="academics.php#certificate">Certificate Programmes</a></li>
             </ul>
           </li>
-          <li><a href="admissions.php" class="nav-link<?= $activePage === 'admissions' ? ' active' : '' ?>">Admissions</a></li>
+          <li class="dropdown">
+            <a href="admissions.php" class="nav-link<?= $activePage === 'admissions' ? ' active' : '' ?>">Admissions <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
+            <ul class="dropdown-menu">
+              <li><a href="apply.php">Apply to Thrivus</a></li>
+              <li><a href="financial-aid.php">Financial Aid</a></li>
+            </ul>
+          </li>
           <li><a href="research.php" class="nav-link<?= $activePage === 'research' ? ' active' : '' ?>">Research</a></li>
           <li><a href="contact.php" class="nav-link<?= $activePage === 'contact' ? ' active' : '' ?>">Contact</a></li>
-          <li><a href="admissions.php" class="btn btn-primary btn-sm" style="margin-left:8px;">Apply Now</a></li>
+          <li><a href="apply.php" class="btn btn-primary btn-sm" style="margin-left:8px;">Apply Now</a></li>
         </ul>
       </nav>
 

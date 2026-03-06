@@ -46,6 +46,8 @@ $_footerYoutube   = escape($_footerSettings['youtube']   ?? 'https://youtube.com
             <li><a href="research.php">Research</a></li>
             <li><a href="news-events.php">News & Events</a></li>
             <li><a href="contact.php">Contact</a></li>
+            <li><a href="apply.php">Apply Now</a></li>
+            <li><a href="financial-aid.php">Financial Aid</a></li>
           </ul>
         </div>
 
@@ -57,6 +59,9 @@ $_footerYoutube   = escape($_footerSettings['youtube']   ?? 'https://youtube.com
             <li><a href="portal.php">Staff Portal</a></li>
             <li><a href="admissions.php#financial-aid">Financial Aid</a></li>
             <li><a href="student-life.php">Campus Life</a></li>
+            <li><a href="gallery.php">Gallery</a></li>
+            <li><a href="support.php">Support Thrivus</a></li>
+            <li><a href="careers.php">Careers</a></li>
           </ul>
         </div>
 
