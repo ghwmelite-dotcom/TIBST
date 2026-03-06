@@ -5,7 +5,7 @@ CONFIG_FILE="/var/www/html/includes/config.php"
 
 # Wait for MySQL to be fully ready (beyond just healthcheck)
 echo "Waiting for MySQL to accept connections..."
-until mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "SELECT 1" &>/dev/null; do
+until mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" --ssl-mode=DISABLED -e "SELECT 1" &>/dev/null; do
     sleep 2
 done
 echo "MySQL is ready."
@@ -15,12 +15,12 @@ if [ ! -f "$CONFIG_FILE" ]; then
     echo "First run detected — setting up TIBST CMS..."
 
     # Run schema
-    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" < /var/www/html/schema.sql
+    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" --ssl-mode=DISABLED "$DB_NAME" < /var/www/html/schema.sql
     echo "Database tables created and seeded."
 
     # Create admin user via PHP
     php -r "
-        \$pdo = new PDO('mysql:host=' . getenv('DB_HOST') . ';dbname=' . getenv('DB_NAME') . ';charset=utf8mb4', getenv('DB_USER'), getenv('DB_PASS'));
+        \$pdo = new PDO('mysql:host=' . getenv('DB_HOST') . ';dbname=' . getenv('DB_NAME') . ';charset=utf8mb4', getenv('DB_USER'), getenv('DB_PASS'), [PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false]);
         \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         \$hash = password_hash(getenv('ADMIN_PASS'), PASSWORD_DEFAULT);
         \$stmt = \$pdo->prepare('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, \"admin\")');
