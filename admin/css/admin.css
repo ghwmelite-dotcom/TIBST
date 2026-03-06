@@ -369,6 +369,42 @@ img { max-width: 100%; height: auto; }
   color: var(--admin-dark);
 }
 
+.admin-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.admin-card-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.admin-card-link h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--admin-dark);
+  margin-bottom: 4px;
+}
+
+.form-section-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--admin-dark);
+  margin: 24px 0 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.form-section-title:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
 /* ─── Stat Cards (Dashboard) ─────────────────────────────────────────── */
 .stat-cards {
   display: grid;

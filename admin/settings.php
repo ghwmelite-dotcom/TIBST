@@ -1,0 +1,108 @@
+<?php
+/**
+ * Admin — Site Settings.
+ */
+
+$adminPageTitle  = 'Settings';
+$adminActivePage = 'settings';
+
+require_once __DIR__ . '/includes/admin-header.php';
+
+$pdo = getDB();
+
+// ─── POST Handler ────────────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    validateCsrf();
+
+    $submitted = $_POST['settings'] ?? [];
+
+    foreach ($submitted as $key => $value) {
+        $stmt = $pdo->prepare('UPDATE settings SET setting_value = ? WHERE setting_key = ?');
+        $stmt->execute([trim($value), $key]);
+    }
+
+    flashMessage('Settings updated.');
+    header('Location: /admin/settings.php');
+    exit;
+}
+
+$settings = getSettings();
+?>
+
+<div class="content-header">
+    <h2>Settings</h2>
+</div>
+
+<div class="admin-card">
+    <form method="POST">
+        <?= csrfField() ?>
+
+        <h3 class="form-section-title">Site Information</h3>
+
+        <div class="form-group">
+            <label class="form-label">Site Name</label>
+            <input type="text" name="settings[site_name]" class="form-input" value="<?= escape($settings['site_name'] ?? '') ?>">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Site Short Name</label>
+            <input type="text" name="settings[site_short_name]" class="form-input" value="<?= escape($settings['site_short_name'] ?? '') ?>">
+        </div>
+
+        <h3 class="form-section-title">Contact Information</h3>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="text" name="settings[phone]" class="form-input" value="<?= escape($settings['phone'] ?? '') ?>">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mobile</label>
+                <input type="text" name="settings[mobile]" class="form-input" value="<?= escape($settings['mobile'] ?? '') ?>">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" name="settings[email]" class="form-input" value="<?= escape($settings['email'] ?? '') ?>">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Address</label>
+            <textarea name="settings[address]" class="form-textarea" rows="3"><?= escape($settings['address'] ?? '') ?></textarea>
+        </div>
+
+        <h3 class="form-section-title">Social Media</h3>
+
+        <div class="form-group">
+            <label class="form-label">Facebook</label>
+            <input type="url" name="settings[facebook]" class="form-input" value="<?= escape($settings['facebook'] ?? '') ?>" placeholder="https://facebook.com/...">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Instagram</label>
+            <input type="url" name="settings[instagram]" class="form-input" value="<?= escape($settings['instagram'] ?? '') ?>" placeholder="https://instagram.com/...">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">LinkedIn</label>
+            <input type="url" name="settings[linkedin]" class="form-input" value="<?= escape($settings['linkedin'] ?? '') ?>" placeholder="https://linkedin.com/...">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">YouTube</label>
+            <input type="url" name="settings[youtube]" class="form-input" value="<?= escape($settings['youtube'] ?? '') ?>" placeholder="https://youtube.com/...">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">WhatsApp</label>
+            <input type="url" name="settings[whatsapp]" class="form-input" value="<?= escape($settings['whatsapp'] ?? '') ?>" placeholder="https://wa.me/...">
+        </div>
+
+        <div class="btn-group mt-2">
+            <button type="submit" class="btn-admin btn-admin-primary">Save Settings</button>
+        </div>
+    </form>
+</div>
+
+<?php require_once __DIR__ . '/includes/admin-footer.php'; ?>
