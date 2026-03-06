@@ -1,4 +1,19 @@
-<?php $pageTitle = 'About Us - TIBST | Thrivus Institute of Biomedical Sciences & Technology'; $activePage = 'about'; require_once 'includes/header.php'; ?>
+<?php
+$pageTitle = 'About Us - TIBST | Thrivus Institute of Biomedical Sciences & Technology';
+$activePage = 'about';
+require_once 'includes/header.php';
+
+// ── Fetch dynamic content ──────────────────────────────────────────
+$missionBlock  = getPageBlock('about', 'mission');
+$visionBlock   = getPageBlock('about', 'vision');
+$valuesBlock   = getPageBlock('about', 'values');
+$historyBlock  = getPageBlock('about', 'history');
+
+$governingCouncil = getStaffByDepartment('Governing Council');
+$executiveTeam    = getStaffByDepartment('Executive Team');
+$academicStaff    = getStaffByDepartment('Academic Staff');
+$administration   = getStaffByDepartment('Administration');
+?>
 
   <!-- PAGE HERO -->
   <section class="page-hero" style="background-image: url('https://images.unsplash.com/photo-1562774053-701939374585?w=1920&q=80');">
@@ -31,7 +46,11 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
           </div>
           <h3>Our Mission</h3>
+          <?php if (!empty($missionBlock)): ?>
+          <?= $missionBlock ?>
+          <?php else: ?>
           <p>To provide world-class postgraduate education and conduct pioneering research in biomedical sciences and technology, empowering graduates to become leaders who drive transformative healthcare solutions across Africa and the globe.</p>
+          <?php endif; ?>
         </div>
 
         <div class="feature-card fade-up fade-up-delay-1">
@@ -39,7 +58,11 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
           </div>
           <h3>Our Vision</h3>
+          <?php if (!empty($visionBlock)): ?>
+          <?= $visionBlock ?>
+          <?php else: ?>
           <p>To be the premier institution in Africa for biomedical research and postgraduate training, recognised globally for our contributions to gene therapy, human embryology, and translational medicine that improves lives worldwide.</p>
+          <?php endif; ?>
         </div>
 
         <div class="feature-card fade-up fade-up-delay-2">
@@ -47,7 +70,11 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
           </div>
           <h3>Our Values</h3>
+          <?php if (!empty($valuesBlock)): ?>
+          <?= $valuesBlock ?>
+          <?php else: ?>
           <p>Excellence in research and education. Integrity in all we do. Innovation that pushes boundaries. Collaboration that amplifies impact. Service to our communities and to humanity through science and compassion.</p>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -62,6 +89,11 @@
         <p class="section-subtitle">From a bold vision to a thriving institution, TIBST has grown through dedication and purpose.</p>
       </div>
 
+      <?php if (!empty($historyBlock)): ?>
+      <div class="fade-up">
+        <?= $historyBlock ?>
+      </div>
+      <?php else: ?>
       <div class="timeline">
         <div class="timeline-item fade-up">
           <div class="timeline-marker"></div>
@@ -126,6 +158,7 @@
           </div>
         </div>
       </div>
+      <?php endif; ?>
     </div>
   </section>
 
@@ -138,6 +171,19 @@
         <p class="section-subtitle">The Governing Council provides strategic oversight and governance for the institute, ensuring TIBST fulfils its mission with excellence and accountability.</p>
       </div>
 
+<?php if (!empty($governingCouncil)): ?>
+      <div class="team-grid">
+        <?php foreach ($governingCouncil as $i => $member): ?>
+        <div class="team-card fade-up <?= $i % 3 === 1 ? 'fade-up-delay-1' : ($i % 3 === 2 ? 'fade-up-delay-2' : '') ?>">
+          <div class="team-card-img" style="background-image: url('<?= $member['photo'] ? escape($member['photo']) : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80' ?>');"></div>
+          <div class="team-card-body">
+            <h3 class="team-card-name"><?= escape($member['name']) ?></h3>
+            <p class="team-card-title"><?= escape($member['role']) ?></p>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+<?php else: ?>
       <div class="team-grid">
         <div class="team-card fade-up">
           <div class="team-card-img" style="background-image: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80');"></div>
@@ -171,6 +217,7 @@
           </div>
         </div>
       </div>
+<?php endif; ?>
     </div>
   </section>
 
@@ -183,6 +230,19 @@
         <p class="section-subtitle">The Executive Team is responsible for the day-to-day leadership and strategic direction of the institute.</p>
       </div>
 
+<?php if (!empty($executiveTeam)): ?>
+      <div class="team-grid">
+        <?php foreach ($executiveTeam as $i => $member): ?>
+        <div class="team-card fade-up <?= $i % 3 === 1 ? 'fade-up-delay-1' : ($i % 3 === 2 ? 'fade-up-delay-2' : '') ?>">
+          <div class="team-card-img" style="background-image: url('<?= $member['photo'] ? escape($member['photo']) : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' ?>');"></div>
+          <div class="team-card-body">
+            <h3 class="team-card-name"><?= escape($member['name']) ?></h3>
+            <p class="team-card-title"><?= escape($member['role']) ?></p>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+<?php else: ?>
       <div class="team-grid">
         <div class="team-card fade-up">
           <div class="team-card-img" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80');"></div>
@@ -224,6 +284,7 @@
           </div>
         </div>
       </div>
+<?php endif; ?>
     </div>
   </section>
 
@@ -236,6 +297,19 @@
         <p class="section-subtitle">Our distinguished faculty members bring extensive research experience and a passion for mentoring the next generation of biomedical scientists.</p>
       </div>
 
+<?php if (!empty($academicStaff)): ?>
+      <div class="team-grid">
+        <?php foreach ($academicStaff as $i => $member): ?>
+        <div class="team-card fade-up <?= $i % 3 === 1 ? 'fade-up-delay-1' : ($i % 3 === 2 ? 'fade-up-delay-2' : '') ?>">
+          <div class="team-card-img" style="background-image: url('<?= $member['photo'] ? escape($member['photo']) : 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80' ?>');"></div>
+          <div class="team-card-body">
+            <h3 class="team-card-name"><?= escape($member['name']) ?></h3>
+            <p class="team-card-title"><?= escape($member['role']) ?></p>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+<?php else: ?>
       <div class="team-grid">
         <div class="team-card fade-up">
           <div class="team-card-img" style="background-image: url('https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80');"></div>
@@ -285,6 +359,7 @@
           </div>
         </div>
       </div>
+<?php endif; ?>
     </div>
   </section>
 
@@ -297,6 +372,19 @@
         <p class="section-subtitle">Our administrative staff ensure the smooth operation of the institute, providing essential support to students, faculty, and researchers.</p>
       </div>
 
+<?php if (!empty($administration)): ?>
+      <div class="team-grid">
+        <?php foreach ($administration as $i => $member): ?>
+        <div class="team-card fade-up <?= $i % 3 === 1 ? 'fade-up-delay-1' : ($i % 3 === 2 ? 'fade-up-delay-2' : '') ?>">
+          <div class="team-card-img" style="background-image: url('<?= $member['photo'] ? escape($member['photo']) : 'https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=400&q=80' ?>');"></div>
+          <div class="team-card-body">
+            <h3 class="team-card-name"><?= escape($member['name']) ?></h3>
+            <p class="team-card-title"><?= escape($member['role']) ?></p>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+<?php else: ?>
       <div class="team-grid">
         <div class="team-card fade-up">
           <div class="team-card-img" style="background-image: url('https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=400&q=80');"></div>
@@ -330,6 +418,7 @@
           </div>
         </div>
       </div>
+<?php endif; ?>
     </div>
   </section>
 

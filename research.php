@@ -1,4 +1,13 @@
-<?php $pageTitle = 'Research & Innovation - TIBST'; $activePage = 'research'; require_once 'includes/header.php'; ?>
+<?php
+$pageTitle = 'Research & Innovation - TIBST';
+$activePage = 'research';
+require_once 'includes/header.php';
+
+// ── Fetch dynamic content ──────────────────────────────────────────
+$researchOverview = getPageBlock('research', 'overview');
+$researchUnits    = getPageBlock('research', 'units');
+$researchPubs     = getPageBlock('research', 'publications');
+?>
 
   <!-- PAGE HERO -->
   <section class="page-hero">
@@ -17,6 +26,9 @@
   <!-- RESEARCH OVERVIEW -->
   <section class="section" style="background: var(--white);">
     <div class="container">
+      <?php if (!empty($researchOverview)): ?>
+      <div class="fade-up"><?= $researchOverview ?></div>
+      <?php else: ?>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center;">
         <div class="fade-up">
           <div class="section-label">Our Mission</div>
@@ -42,6 +54,7 @@
           <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&q=80" alt="Research laboratory at TIBST" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">
         </div>
       </div>
+      <?php endif; ?>
     </div>
   </section>
 

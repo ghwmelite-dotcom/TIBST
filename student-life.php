@@ -1,4 +1,13 @@
-<?php $pageTitle = 'Student Life - TIBST | Thrivus Institute of Biomedical Sciences & Technology'; $activePage = 'student-life'; require_once 'includes/header.php'; ?>
+<?php
+$pageTitle = 'Student Life - TIBST | Thrivus Institute of Biomedical Sciences & Technology';
+$activePage = 'student-life';
+require_once 'includes/header.php';
+
+// ── Fetch dynamic content ──────────────────────────────────────────
+$campusLifeBlock = getPageBlock('student-life', 'campus');
+$clubsBlock      = getPageBlock('student-life', 'clubs');
+$galleryBlock    = getPageBlock('student-life', 'gallery');
+?>
 
   <!-- PAGE HERO -->
   <section class="page-hero">
@@ -25,6 +34,9 @@
         <p class="section-subtitle">Our campus is designed to provide an exceptional environment for learning, research, and personal development.</p>
       </div>
 
+      <?php if (!empty($campusLifeBlock)): ?>
+      <div class="fade-up"><?= $campusLifeBlock ?></div>
+      <?php else: ?>
       <div class="features-grid">
         <div class="feature-card fade-up">
           <div class="feature-icon">
@@ -74,6 +86,7 @@
           <p>Dedicated quiet zones and collaborative study spaces equipped with high-speed internet and power outlets, ideal for focused academic work and group discussions.</p>
         </div>
       </div>
+      <?php endif; ?>
     </div>
   </section>
 

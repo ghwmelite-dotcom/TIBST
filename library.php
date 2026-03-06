@@ -1,4 +1,13 @@
-<?php $pageTitle = 'Library - TIBST'; $activePage = 'library'; require_once 'includes/header.php'; ?>
+<?php
+$pageTitle = 'Library - TIBST';
+$activePage = 'library';
+require_once 'includes/header.php';
+
+// ── Fetch dynamic content ──────────────────────────────────────────
+$libraryOverview  = getPageBlock('library', 'overview');
+$libraryResources = getPageBlock('library', 'resources');
+$libraryHours     = getPageBlock('library', 'hours');
+?>
 
   <!-- PAGE HERO -->
   <section class="page-hero" style="background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=80');">
@@ -17,6 +26,9 @@
   <!-- LIBRARY OVERVIEW -->
   <section class="section" style="background: var(--off-white);">
     <div class="container">
+      <?php if (!empty($libraryOverview)): ?>
+      <div class="fade-up"><?= $libraryOverview ?></div>
+      <?php else: ?>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:48px; align-items:center;">
         <div class="fade-up">
           <div class="section-label">About the Library</div>
@@ -29,6 +41,7 @@
           <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&q=80" alt="TIBST Library interior" style="width:100%; height:400px; object-fit:cover; display:block;">
         </div>
       </div>
+      <?php endif; ?>
     </div>
   </section>
 

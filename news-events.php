@@ -1,5 +1,51 @@
-<?php $pageTitle = 'News & Events - TIBST'; $activePage = 'news-events'; require_once 'includes/header.php'; ?>
+<?php
+$pageTitle = 'News & Events - TIBST';
+$activePage = 'news-events';
+require_once 'includes/header.php';
 
+// ── Single article view ────────────────────────────────────────────
+$slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
+$singleArticle = null;
+if ($slug !== '') {
+    $singleArticle = getNewsBySlug($slug);
+}
+
+// ── List view data ─────────────────────────────────────────────────
+$allNews = getPublishedNews(50);
+?>
+
+<?php if ($singleArticle): ?>
+  <!-- SINGLE ARTICLE VIEW -->
+  <section class="page-hero" style="background-image: url('<?= $singleArticle['image'] ? escape($singleArticle['image']) : 'https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=1920&q=80' ?>');">
+    <div class="hero-overlay"></div>
+    <div class="container" style="position:relative; z-index:1;">
+      <div class="breadcrumb fade-up">
+        <a href="index.php">Home</a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <a href="news-events.php">News & Events</a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <span>Article</span>
+      </div>
+      <h1 class="fade-up"><?= escape($singleArticle['title']) ?></h1>
+      <?php $artDate = new DateTime($singleArticle['publish_date']); ?>
+      <p class="fade-up"><?= $artDate->format('F j, Y') ?></p>
+    </div>
+  </section>
+
+  <section class="section" style="background: var(--off-white);">
+    <div class="container">
+      <div style="max-width:800px; margin:0 auto;">
+        <div class="fade-up" style="font-size:1.05rem; line-height:1.9; color:var(--gray-700);">
+          <?= $singleArticle['body'] ?>
+        </div>
+        <div style="margin-top:48px; text-align:center;">
+          <a href="news-events.php" class="btn btn-outline-dark">Back to All News <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<?php else: ?>
   <!-- PAGE HERO -->
   <section class="page-hero" style="background-image: url('https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=1920&q=80');">
     <div class="hero-overlay"></div>
@@ -23,6 +69,23 @@
         <p class="section-subtitle">Explore the latest developments in biomedical research, academic achievements, and institutional milestones.</p>
       </div>
 
+<?php if (!empty($allNews)): ?>
+      <div class="news-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap:32px;">
+        <?php foreach ($allNews as $i => $news): ?>
+        <a href="news-events.php?slug=<?= escape($news['slug']) ?>" style="text-decoration:none; color:inherit;">
+          <div class="news-card fade-up <?= $i % 3 === 1 ? 'fade-up-delay-1' : ($i % 3 === 2 ? 'fade-up-delay-2' : '') ?>">
+            <div class="news-card-img" style="background-image: url('<?= $news['image'] ? escape($news['image']) : 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80' ?>');"></div>
+            <div class="news-card-body">
+              <?php $nDate = new DateTime($news['publish_date']); ?>
+              <div class="news-card-date"><?= $nDate->format('F j, Y') ?></div>
+              <h3 class="news-card-title"><?= escape($news['title']) ?></h3>
+              <p class="news-card-excerpt"><?= escape($news['excerpt']) ?></p>
+            </div>
+          </div>
+        </a>
+        <?php endforeach; ?>
+      </div>
+<?php else: ?>
       <div class="news-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap:32px;">
         <div class="news-card fade-up">
           <div class="news-card-img" style="background-image: url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&q=80');"></div>
@@ -78,6 +141,7 @@
           </div>
         </div>
       </div>
+<?php endif; ?>
     </div>
   </section>
 
@@ -189,5 +253,7 @@
       </div>
     </div>
   </section>
+
+<?php endif; ?>
 
 <?php require_once 'includes/footer.php'; ?>

@@ -1,4 +1,11 @@
-<?php $pageTitle = 'Academics - TIBST | Thrivus Institute of Biomedical Sciences & Technology'; $activePage = 'academics'; require_once 'includes/header.php'; ?>
+<?php
+$pageTitle = 'Academics - TIBST | Thrivus Institute of Biomedical Sciences & Technology';
+$activePage = 'academics';
+require_once 'includes/header.php';
+
+// ── Fetch dynamic content ──────────────────────────────────────────
+$allProgrammes = getAllProgrammes();
+?>
 
   <!-- PAGE HERO -->
   <section class="page-hero" style="background-image: url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1920&q=80');">
@@ -62,6 +69,33 @@
         <p class="section-subtitle">Our postgraduate degree programmes combine advanced coursework with original research, preparing graduates to become leaders in gene therapy and human embryology.</p>
       </div>
 
+<?php
+// Filter postgraduate programmes from DB
+$postgraduateProgs = array_filter($allProgrammes, function($p) {
+    $dt = strtolower($p['degree_type']);
+    return $dt === 'mphil' || $dt === 'phd';
+});
+?>
+
+<?php if (!empty($postgraduateProgs)): ?>
+      <div class="programs-grid" style="margin-top:48px;">
+        <?php foreach ($postgraduateProgs as $i => $prog): ?>
+        <div class="program-card fade-up <?= $i % 2 === 1 ? 'fade-up-delay-1' : '' ?>">
+          <div class="program-card-img" style="background-image: url('<?= $prog['image'] ? escape($prog['image']) : 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&q=80' ?>');">
+            <span class="program-card-badge"><?= escape($prog['degree_type']) ?></span>
+          </div>
+          <div class="program-card-body">
+            <h3 class="program-card-title"><?= escape($prog['title']) ?></h3>
+            <p class="program-card-desc"><?= escape($prog['description']) ?></p>
+            <div class="program-card-meta">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <?= escape($prog['duration']) ?></span>
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"></path></svg> <?= strtolower($prog['degree_type']) === 'phd' ? 'Doctoral' : 'Postgraduate' ?></span>
+            </div>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+<?php else: ?>
       <div class="programs-grid" style="margin-top:48px;">
 
         <!-- MPhil Gene Therapy -->
@@ -165,6 +199,7 @@
         </div>
 
       </div>
+<?php endif; ?>
     </div>
   </section>
 
@@ -177,6 +212,32 @@
         <p class="section-subtitle">Short-term, intensive certificate programmes designed for working professionals and recent graduates seeking specialised training in biomedical sciences.</p>
       </div>
 
+<?php
+// Filter certificate programmes from DB
+$certProgs = array_filter($allProgrammes, function($p) {
+    return strtolower($p['degree_type']) === 'certificate';
+});
+?>
+
+<?php if (!empty($certProgs)): ?>
+      <div class="programs-grid" style="margin-top:48px;">
+        <?php foreach ($certProgs as $i => $prog): ?>
+        <div class="program-card fade-up <?= $i % 3 === 1 ? 'fade-up-delay-1' : ($i % 3 === 2 ? 'fade-up-delay-2' : '') ?>">
+          <div class="program-card-img" style="background-image: url('<?= $prog['image'] ? escape($prog['image']) : 'https://images.unsplash.com/photo-1581093588401-fbb62a02f120?w=800&q=80' ?>');">
+            <span class="program-card-badge">Certificate</span>
+          </div>
+          <div class="program-card-body">
+            <h3 class="program-card-title"><?= escape($prog['title']) ?></h3>
+            <p class="program-card-desc"><?= escape($prog['description']) ?></p>
+            <div class="program-card-meta">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <?= escape($prog['duration']) ?></span>
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"></path></svg> Professional</span>
+            </div>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+<?php else: ?>
       <div class="programs-grid" style="margin-top:48px;">
 
         <div class="program-card fade-up">
@@ -222,6 +283,7 @@
         </div>
 
       </div>
+<?php endif; ?>
     </div>
   </section>
 

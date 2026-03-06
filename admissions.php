@@ -1,4 +1,14 @@
-<?php $pageTitle = 'Admissions - TIBST | Thrivus Institute of Biomedical Sciences & Technology'; $activePage = 'admissions'; require_once 'includes/header.php'; ?>
+<?php
+$pageTitle = 'Admissions - TIBST | Thrivus Institute of Biomedical Sciences & Technology';
+$activePage = 'admissions';
+require_once 'includes/header.php';
+
+// ── Fetch dynamic content ──────────────────────────────────────────
+$admissionsIntro   = getPageBlock('admissions', 'intro');
+$admissionsProcess = getPageBlock('admissions', 'process');
+$admissionsFees    = getPageBlock('admissions', 'fees');
+$admissionsAid     = getPageBlock('admissions', 'financial_aid');
+?>
 
   <!-- PAGE HERO -->
   <section class="page-hero">
@@ -27,6 +37,9 @@
         <p class="section-subtitle">Follow these steps to submit your application for admission to any of our postgraduate or certificate programmes.</p>
       </div>
 
+      <?php if (!empty($admissionsProcess)): ?>
+      <div class="fade-up"><?= $admissionsProcess ?></div>
+      <?php else: ?>
       <div class="timeline fade-up">
         <div class="timeline-item">
           <div class="timeline-year">Step 1</div>
@@ -58,6 +71,7 @@
           <p style="font-size:0.9rem; color:var(--gray-600); line-height:1.7;">Review your application and submit it. The admissions committee will review your application and notify you of the decision via email within 4-6 weeks. Successful applicants will receive an offer letter with enrolment instructions.</p>
         </div>
       </div>
+      <?php endif; ?>
     </div>
   </section>
 
@@ -158,6 +172,9 @@
         <p class="section-subtitle">Below is the fee schedule for the 2026/2027 academic year. All amounts are quoted in Ghana Cedis (GHS).</p>
       </div>
 
+      <?php if (!empty($admissionsFees)): ?>
+      <div class="fade-up"><?= $admissionsFees ?></div>
+      <?php else: ?>
       <div class="table-wrapper fade-up">
         <table class="styled-table">
           <thead>
@@ -207,6 +224,7 @@
           <strong style="color:var(--gray-700);">Note:</strong> Fees are subject to review annually. International students may be subject to additional administrative fees. Laboratory and research materials fees may apply for certain programmes. Payment plans are available upon request.
         </p>
       </div>
+      <?php endif; ?>
     </div>
   </section>
 
