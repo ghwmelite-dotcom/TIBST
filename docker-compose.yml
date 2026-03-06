@@ -1,8 +1,6 @@
 services:
   app:
     build: .
-    ports:
-      - "8080:80"
     environment:
       DB_HOST: db
       DB_NAME: tibst_cms
@@ -27,8 +25,6 @@ services:
       MYSQL_PASSWORD: tibst_secret_pass
     volumes:
       - db_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_secret_pass"]
       interval: 5s
@@ -47,6 +43,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+    depends_on:
+      - app
     restart: unless-stopped
 
 volumes:
