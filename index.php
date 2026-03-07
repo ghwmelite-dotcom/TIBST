@@ -9,15 +9,100 @@ $testimonials = getActiveTestimonials();
 $latestNews   = getPublishedNews(3);
 ?>
 
-  <!-- HERO — Aurora Gradient -->
-  <section class="hero-v3">
+  <!-- HERO — Cinematic Image Slider -->
+<?php if (!empty($slides)): ?>
+  <section class="hero-v3 hero-slider">
+    <!-- Slides -->
+    <?php foreach ($slides as $i => $slide): ?>
+    <div class="hero-slide <?= $i === 0 ? 'active' : '' ?>">
+      <div class="hero-v3-bg" style="background-image: url('<?= escape($slide['image']) ?>');"></div>
+      <div class="hero-v3-overlay"></div>
+
+      <div class="container hero-v3-wrap">
+        <div class="hero-v3-main">
+          <div class="hero-v3-badge <?= $i === 0 ? 'hero-anim-1' : '' ?>">
+            <span class="hero-v3-pulse"></span>
+            Admissions Open &mdash; 2026/2027
+          </div>
+          <h1 class="hero-v3-h1">
+            <span class="hero-v3-line <?= $i === 0 ? 'hero-anim-1' : '' ?>"><?= escape($slide['headline_1']) ?></span>
+            <span class="hero-v3-line <?= $i === 0 ? 'hero-anim-2' : '' ?>"><?= escape($slide['headline_2']) ?></span>
+            <span class="hero-v3-line hero-v3-stroke <?= $i === 0 ? 'hero-anim-3' : '' ?>"><?= escape($slide['headline_3']) ?></span>
+          </h1>
+          <p class="hero-v3-p <?= $i === 0 ? 'hero-anim-4' : '' ?>"><?= escape($slide['subtitle']) ?></p>
+          <div class="hero-v3-actions <?= $i === 0 ? 'hero-anim-5' : '' ?>">
+            <a href="<?= escape($slide['cta_link']) ?>" class="btn btn-primary btn-lg">
+              <?= escape($slide['cta_text']) ?>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="academics.php" class="btn btn-outline-glass">Explore Programmes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <?php endforeach; ?>
+
+    <!-- Persistent layers (always visible above slides) -->
     <div class="hero-v3-glow" aria-hidden="true"></div>
     <div class="hero-v3-grid" aria-hidden="true"></div>
+    <div class="hero-v3-grain" aria-hidden="true"></div>
     <div class="hero-v3-shapes" aria-hidden="true">
       <svg class="float-shape fs-1" viewBox="0 0 120 120" fill="none"><polygon points="60,4 114,32 114,88 60,116 6,88 6,32" stroke="currentColor" stroke-width="0.6"/></svg>
       <svg class="float-shape fs-2" viewBox="0 0 120 120" fill="none"><polygon points="60,4 114,32 114,88 60,116 6,88 6,32" stroke="currentColor" stroke-width="0.4"/></svg>
       <svg class="float-shape fs-3" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="0.5"/><circle cx="50" cy="50" r="22" stroke="currentColor" stroke-width="0.3"/></svg>
-      <svg class="float-shape fs-4" viewBox="0 0 80 80" fill="none"><rect x="5" y="5" width="70" height="70" rx="8" stroke="currentColor" stroke-width="0.5" transform="rotate(45 40 40)"/></svg>
+    </div>
+
+    <!-- Stats bar (persistent) -->
+    <div class="hero-v3-stats-float">
+      <div class="container">
+        <div class="hero-v3-stats hero-anim-6">
+          <div class="hero-v3-stat">
+            <div class="hero-v3-stat-num" data-count="5" data-suffix="+">0</div>
+            <div class="hero-v3-stat-label">Programmes</div>
+          </div>
+          <div class="hero-v3-stat">
+            <div class="hero-v3-stat-num" data-count="50" data-suffix="+">0</div>
+            <div class="hero-v3-stat-label">Researchers</div>
+          </div>
+          <div class="hero-v3-stat">
+            <div class="hero-v3-stat-num" data-count="3">0</div>
+            <div class="hero-v3-stat-label">Research Units</div>
+          </div>
+          <div class="hero-v3-stat hero-v3-stat-accent">
+            <div class="hero-v3-stat-num" data-count="100" data-suffix="%">0</div>
+            <div class="hero-v3-stat-label">Dedication</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slider navigation -->
+    <?php if (count($slides) > 1): ?>
+    <button class="slider-prev" aria-label="Previous slide"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="slider-next" aria-label="Next slide"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    <div class="slider-dots">
+      <?php foreach ($slides as $i => $s): ?>
+      <button class="slider-dot <?= $i === 0 ? 'active' : '' ?>" aria-label="Slide <?= $i + 1 ?>"></button>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <div class="hero-v3-scroll">
+      <span>Scroll to explore</span>
+      <div class="hero-v3-scroll-bar"></div>
+    </div>
+  </section>
+
+<?php else: ?>
+  <!-- Static fallback — Aurora gradient (no slides in DB) -->
+  <section class="hero-v3">
+    <div class="hero-v3-glow" aria-hidden="true"></div>
+    <div class="hero-v3-grid" aria-hidden="true"></div>
+    <div class="hero-v3-grain" aria-hidden="true"></div>
+    <div class="hero-v3-shapes" aria-hidden="true">
+      <svg class="float-shape fs-1" viewBox="0 0 120 120" fill="none"><polygon points="60,4 114,32 114,88 60,116 6,88 6,32" stroke="currentColor" stroke-width="0.6"/></svg>
+      <svg class="float-shape fs-2" viewBox="0 0 120 120" fill="none"><polygon points="60,4 114,32 114,88 60,116 6,88 6,32" stroke="currentColor" stroke-width="0.4"/></svg>
+      <svg class="float-shape fs-3" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="0.5"/><circle cx="50" cy="50" r="22" stroke="currentColor" stroke-width="0.3"/></svg>
     </div>
 
     <div class="container hero-v3-wrap">
@@ -26,22 +111,6 @@ $latestNews   = getPublishedNews(3);
           <span class="hero-v3-pulse"></span>
           Admissions Open &mdash; 2026/2027
         </div>
-
-        <?php if (!empty($slides)): $slide = $slides[0]; ?>
-        <h1 class="hero-v3-h1">
-          <span class="hero-v3-line hero-anim-1"><?= escape($slide['headline_1']) ?></span>
-          <span class="hero-v3-line hero-anim-2"><?= escape($slide['headline_2']) ?></span>
-          <span class="hero-v3-line hero-v3-stroke hero-anim-3"><?= escape($slide['headline_3']) ?></span>
-        </h1>
-        <p class="hero-v3-p hero-anim-4"><?= escape($slide['subtitle']) ?></p>
-        <div class="hero-v3-actions hero-anim-5">
-          <a href="<?= escape($slide['cta_link']) ?>" class="btn btn-primary btn-lg">
-            <?= escape($slide['cta_text']) ?>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
-          <a href="academics.php" class="btn btn-outline-glass">Explore Programmes</a>
-        </div>
-        <?php else: ?>
         <h1 class="hero-v3-h1">
           <span class="hero-v3-line hero-anim-1">Shaping the</span>
           <span class="hero-v3-line hero-anim-2">Future of</span>
@@ -55,7 +124,6 @@ $latestNews   = getPublishedNews(3);
           </a>
           <a href="academics.php" class="btn btn-outline-glass">Explore Programmes</a>
         </div>
-        <?php endif; ?>
       </div>
 
       <div class="hero-v3-stats hero-anim-6">
@@ -83,6 +151,7 @@ $latestNews   = getPublishedNews(3);
       <div class="hero-v3-scroll-bar"></div>
     </div>
   </section>
+<?php endif; ?>
 
   <!-- PROGRAMMES — Editorial Showcase -->
   <section class="section programmes-section">

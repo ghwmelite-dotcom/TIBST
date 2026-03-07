@@ -1553,7 +1553,63 @@ textarea.form-input {
   background: #080c18;
 }
 
-/* Animated aurora glow */
+/* --- Slider slides --- */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  z-index: 1;
+}
+
+/* Background image per slide */
+.hero-v3-bg {
+  position: absolute;
+  inset: -4px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: kenBurns 20s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes kenBurns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.06); }
+}
+
+/* Dark cinematic overlay on each slide */
+.hero-v3-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(8,12,24,0.82) 0%, rgba(8,12,24,0.55) 40%, rgba(8,12,24,0.75) 100%),
+    linear-gradient(90deg, rgba(8,12,24,0.6) 0%, transparent 60%);
+}
+
+/* Film-grain noise texture */
+.hero-v3-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 150px;
+}
+
+/* Animated aurora glow — persistent layer above slides */
 .hero-v3-glow {
   position: absolute;
   inset: -50%;
@@ -1565,6 +1621,13 @@ textarea.form-input {
     radial-gradient(circle at 45% 10%, rgba(197,224,99,0.08) 0%, transparent 30%);
   filter: blur(80px);
   animation: glowDrift 18s ease-in-out infinite alternate;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* When slider has bg images, reduce glow opacity so images show through */
+.hero-slider .hero-v3-glow {
+  opacity: 0.5;
 }
 
 @keyframes glowDrift {
@@ -1573,21 +1636,23 @@ textarea.form-input {
   100% { transform: translate(2%, -3%) scale(0.98); }
 }
 
-/* Dot grid */
+/* Dot grid — persistent */
 .hero-v3-grid {
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
   background-size: 32px 32px;
   pointer-events: none;
+  z-index: 4;
 }
 
-/* Floating molecular shapes */
+/* Floating molecular shapes — persistent */
 .hero-v3-shapes {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  z-index: 5;
 }
 
 .float-shape {
@@ -1637,7 +1702,7 @@ textarea.form-input {
 /* Hero layout */
 .hero-v3-wrap {
   position: relative;
-  z-index: 2;
+  z-index: 6;
   display: flex;
   flex-direction: column;
   gap: 56px;
@@ -1806,13 +1871,90 @@ textarea.form-input {
   letter-spacing: 0.12em;
 }
 
+/* Persistent stats bar (floating above slides) */
+.hero-v3-stats-float {
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  right: 0;
+  z-index: 7;
+  pointer-events: auto;
+}
+
+/* Slider navigation — prev/next */
+.slider-prev,
+.slider-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: rgba(8,12,24,0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.slider-prev { left: 24px; }
+.slider-next { right: 24px; }
+
+.slider-prev:hover,
+.slider-next:hover {
+  opacity: 1;
+  border-color: var(--accent);
+  background: rgba(78,155,23,0.15);
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Slider dots */
+.slider-dots {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+}
+
+.slider-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.slider-dot.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: scale(1.25);
+}
+
+.slider-dot:hover:not(.active) {
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.15);
+}
+
 /* Hero scroll indicator */
 .hero-v3-scroll {
   position: absolute;
   bottom: 36px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 2;
+  z-index: 9;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2598,6 +2740,9 @@ textarea.form-input {
   .hero-v3-stat { flex: 1 1 45%; }
   .hero-v3-stat::after { display: none; }
   .float-shape { display: none; }
+  .hero-v3-stats-float { bottom: 80px; }
+  .slider-prev { left: 16px; }
+  .slider-next { right: 16px; }
 
   .features-v3 { grid-template-columns: repeat(2, 1fr); }
   .feature-v3-lg { grid-row: auto; grid-column: 1 / -1; }
@@ -2626,6 +2771,13 @@ textarea.form-input {
   }
   .btn-lg, .btn-outline-glass { padding: 16px 32px; font-size: 0.9rem; }
   .hero-v3-scroll { bottom: 24px; }
+  .hero-v3-stats-float { bottom: 70px; }
+  .slider-prev,
+  .slider-next { width: 40px; height: 40px; }
+  .slider-prev { left: 12px; }
+  .slider-next { right: 12px; }
+  .slider-dots { bottom: 36px; gap: 8px; }
+  .slider-dot { width: 8px; height: 8px; }
 
   .features-v3 { grid-template-columns: 1fr; }
   .feature-v3-lg { grid-column: auto; }
@@ -2655,6 +2807,10 @@ textarea.form-input {
   .hero-v3-stat { padding: 18px 12px; }
   .hero-v3-stat-num { font-size: 1.6rem; }
   .hero-v3-stat-label { font-size: 0.6rem; }
+  .hero-v3-stats-float { bottom: 60px; }
+  .slider-prev { left: 8px; }
+  .slider-next { right: 8px; }
+  .slider-dots { bottom: 28px; }
   .prog-featured-title { font-size: 1.3rem; }
   .prog-featured-details { gap: 16px; }
   .prog-grid { gap: 16px; }
