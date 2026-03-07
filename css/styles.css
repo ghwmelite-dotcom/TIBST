@@ -1347,10 +1347,11 @@ textarea.form-input {
 
 .chatbot-window {
   position: fixed;
-  bottom: 100px;
+  bottom: 96px;
   right: 24px;
   width: 380px;
-  max-height: 520px;
+  max-height: calc(100vh - 120px);
+  max-height: calc(100dvh - 120px);
   background: var(--white);
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
@@ -1409,7 +1410,7 @@ textarea.form-input {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 320px;
+  min-height: 0;
 }
 
 .chat-message {
@@ -1454,6 +1455,9 @@ textarea.form-input {
   flex-wrap: wrap;
   gap: 8px;
   padding: 0 20px 16px;
+  max-height: 140px;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
 .faq-btn {
@@ -2564,9 +2568,37 @@ textarea.form-input {
   }
 
   .chatbot-window {
-    width: calc(100% - 32px);
+    width: calc(100% - 24px);
+    right: 12px;
+    bottom: 88px;
+    max-height: calc(100vh - 108px);
+    max-height: calc(100dvh - 108px);
+    border-radius: 16px;
+  }
+
+  .chatbot-toggle {
+    bottom: 16px;
     right: 16px;
-    bottom: 96px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .chatbot-header {
+    padding: 14px 18px;
+  }
+
+  .chatbot-messages {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .chat-faq-buttons {
+    padding: 0 14px 12px;
+    max-height: 110px;
+  }
+
+  .chatbot-input-area {
+    padding: 12px 14px;
   }
 
   .page-hero { padding: 100px 0 60px; }
