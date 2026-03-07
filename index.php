@@ -123,46 +123,41 @@ $latestNews   = getPublishedNews(3);
         <p class="section-subtitle">Cutting-edge postgraduate programmes designed to push the boundaries of biomedical science and technology.</p>
       </div>
 
-      <div class="prog-grid-v5">
+      <div class="prog-grid-v6">
 <?php
 $defaultImages = [
   'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=900&q=80',
   'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=900&q=80',
   'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=900&q=80',
+  'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=900&q=80',
 ];
 $list = !empty($programmes) ? $programmes : [];
 if (empty($list)):
   $list = [
-    ['degree_type'=>'MPhil','title'=>'Gene Therapy','description'=>'Explore cutting-edge gene therapy techniques and their applications in modern medicine. This programme prepares graduates for careers in genetic research and clinical gene therapy.','duration'=>'2 years','image'=>null],
-    ['degree_type'=>'PhD','title'=>'Gene Therapy','description'=>'Conduct advanced research in gene therapy, contributing original knowledge to the field. This doctoral programme is designed for candidates seeking to lead innovation in genetic medicine.','duration'=>'3-4 years','image'=>null],
-    ['degree_type'=>'MPhil','title'=>'Human Embryology','description'=>'Study the science of human embryonic development and reproductive biology. This programme equips students with expertise in embryology research and assisted reproduction technologies.','duration'=>'2 years','image'=>null],
+    ['degree_type'=>'MPhil','title'=>'Gene Therapy','duration'=>'2 years','image'=>null],
+    ['degree_type'=>'PhD','title'=>'Gene Therapy','duration'=>'3-4 years','image'=>null],
+    ['degree_type'=>'MPhil','title'=>'Human Embryology','duration'=>'2 years','image'=>null],
+    ['degree_type'=>'PhD','title'=>'Human Embryology','duration'=>'3-4 years','image'=>null],
   ];
 endif;
 foreach ($list as $i => $prog):
   $img = !empty($prog['image']) ? escape($prog['image']) : ($defaultImages[$i % count($defaultImages)]);
+  $dur = escape($prog['duration']);
+  // Parse duration for display: "2 years" → "MIN 2YRS", "3-4 years" → "MIN 3YRS – MAX 4YRS"
+  if (preg_match('/^(\d+)\s*-\s*(\d+)/', $dur, $m)) {
+    $durLabel = "MIN {$m[1]}YRS &ndash; MAX {$m[2]}YRS";
+  } elseif (preg_match('/^(\d+)/', $dur, $m)) {
+    $durLabel = "MIN {$m[1]}YRS &ndash; MAX " . ($m[1]+1) . "YRS";
+  } else {
+    $durLabel = escape($dur);
+  }
 ?>
-        <article class="prog-card-v5 fade-up fade-up-delay-<?= min($i, 2) ?>">
-          <div class="prog-card-v5-img-wrap">
-            <div class="prog-card-v5-img" style="background-image: url('<?= $img ?>');"></div>
-            <span class="prog-card-v5-degree"><?= escape($prog['degree_type']) ?></span>
-          </div>
-          <div class="prog-card-v5-body">
-            <h3 class="prog-card-v5-title"><?= escape($prog['title']) ?></h3>
-            <p class="prog-card-v5-desc"><?= escape($prog['description']) ?></p>
-            <div class="prog-card-v5-meta">
-              <div class="prog-card-v5-detail">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <?= escape($prog['duration']) ?>
-              </div>
-              <div class="prog-card-v5-detail">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/></svg>
-                Postgraduate
-              </div>
-            </div>
-            <a href="admissions.php" class="prog-card-v5-btn">
-              Apply Now
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
+        <article class="prog-card-v6 fade-up fade-up-delay-<?= min($i, 3) ?>">
+          <div class="prog-card-v6-img" style="background-image: url('<?= $img ?>');"></div>
+          <div class="prog-card-v6-overlay">
+            <span class="prog-card-v6-duration"><?= $durLabel ?></span>
+            <h3 class="prog-card-v6-title"><?= escape($prog['degree_type']) ?> <?= escape($prog['title']) ?></h3>
+            <a href="academics.php" class="prog-card-v6-link">MORE INFO</a>
           </div>
         </article>
 <?php endforeach; ?>
