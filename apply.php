@@ -697,7 +697,7 @@ $showWizard = ($_SERVER['REQUEST_METHOD'] === 'POST');
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
         </div>
         <h3>Address</h3>
-        <p>Constellations Avenue, Lashibi - Accra, Ghana</p>
+        <p><?= escape($settings['address'] ?? 'Constellations Avenue, Lashibi - Accra, Ghana') ?></p>
       </div>
     </div>
   </div>

@@ -14,11 +14,10 @@ startSession();
 requireAuth();
 
 $pageBlocks = [
-    'about'        => ['mission' => 'Mission & Vision', 'vision' => 'Our Vision', 'history' => 'Our History'],
-    'admissions'   => ['requirements' => 'Entry Requirements', 'fees' => 'Tuition & Fees', 'financial-aid' => 'Financial Aid'],
-    'research'     => ['overview' => 'Research Overview', 'units' => 'Research Units'],
-    'student-life' => ['overview' => 'Campus Life Overview'],
-    'library'      => ['overview' => 'Library Overview', 'policies' => 'Library Policies'],
+    'about'        => ['mission' => 'Mission & Vision', 'vision' => 'Our Vision', 'values' => 'Our Values', 'history' => 'Our History'],
+    'admissions'   => ['intro' => 'Introduction', 'process' => 'Application Process', 'fees' => 'Tuition & Fees', 'financial_aid' => 'Financial Aid'],
+    'research'     => ['overview' => 'Research Overview', 'units' => 'Research Units', 'publications' => 'Publications'],
+    'student-life' => ['campus' => 'Campus Life', 'clubs' => 'Clubs & Activities', 'gallery' => 'Gallery'],
 ];
 
 $page = $_GET['page'] ?? '';
