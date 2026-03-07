@@ -115,15 +115,16 @@ $latestNews   = getPublishedNews(3);
   </section>
 
   <!-- ========== PROGRAMMES ========== -->
-  <section class="section programmes-section">
-    <div class="container">
-      <div class="section-header fade-up">
+  <section class="programmes-section">
+    <div class="container" style="padding-bottom:0;">
+      <div class="section-header fade-up" style="padding-top:100px;">
         <div class="section-label">Academic Excellence</div>
         <h2 class="section-title">Our Programmes</h2>
         <p class="section-subtitle">Cutting-edge postgraduate programmes designed to push the boundaries of biomedical science and technology.</p>
       </div>
+    </div>
 
-      <div class="prog-tiles">
+    <div class="prog-tiles">
 <?php if (!empty($programmes)): ?>
         <?php foreach ($programmes as $i => $prog): ?>
         <article class="prog-tile fade-up fade-up-delay-<?= min($i, 2) ?>">
@@ -192,9 +193,10 @@ $latestNews   = getPublishedNews(3);
           <div class="prog-tile-glow"></div>
         </article>
 <?php endif; ?>
-      </div>
+    </div>
 
-      <div style="text-align:center; margin-top:52px;">
+    <div class="container">
+      <div style="text-align:center; padding:52px 0 100px;">
         <a href="academics.php" class="btn btn-outline-dark fade-up">View All Programmes <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
     </div>
