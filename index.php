@@ -91,7 +91,7 @@ $latestNews   = getPublishedNews(3);
 <?php else: ?>
   <!-- Static fallback hero -->
   <section class="hero-cinematic">
-    <div class="hero-cinematic-bg" style="background-image: url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1920&q=80');"></div>
+    <div class="hero-cinematic-bg" style="background-image: url('https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=1920&q=80');"></div>
     <div class="hero-cinematic-overlay"></div>
     <div class="hero-cinematic-grain"></div>
 

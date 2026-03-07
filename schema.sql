@@ -132,7 +132,7 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 -- Seed Data: Hero Slide
 -- =========================================================
 INSERT INTO hero_slides (image, headline_1, headline_2, headline_3, subtitle, cta_text, cta_link, sort_order, is_active) VALUES
-('https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1920&q=80', 'Shaping the', 'Future of', 'Biomedical Science', 'TIBST is a premier institution dedicated to advancing biomedical science education and research in Ghana and beyond.', 'Apply Now', 'admissions.php', 1, 1);
+('https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=1920&q=80', 'Shaping the', 'Future of', 'Biomedical Science', 'TIBST is a premier institution dedicated to advancing biomedical science education and research in Ghana and beyond.', 'Apply Now', 'admissions.php', 1, 1);
 
 -- =========================================================
 -- Seed Data: Programmes
