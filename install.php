@@ -291,6 +291,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$alreadyInstalled) {
                 ':feat' => 0,
                 ':sort' => 3,
             ]);
+            $progStmt->execute([
+                ':title' => 'Human Embryology',
+                ':degree' => 'PhD',
+                ':desc' => 'Conduct advanced doctoral research in human embryonic development, reproductive biology, and assisted reproduction technologies. This programme prepares candidates to lead innovation in developmental science.',
+                ':dur' => '3-4 years',
+                ':feat' => 0,
+                ':sort' => 4,
+            ]);
 
             // ── Seed news ───────────────────────────────────────
             $newsStmt = $pdo->prepare("INSERT INTO news (title, slug, publish_date, excerpt, body, image, is_published) VALUES (:title, :slug, :date, :excerpt, :body, NULL, 1)");

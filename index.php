@@ -4,7 +4,7 @@ $activePage = 'home';
 require_once 'includes/header.php';
 
 $slides       = getActiveSlides();
-$programmes   = getFeaturedProgrammes();
+$programmes   = getAllProgrammes();
 $testimonials = getActiveTestimonials();
 $latestNews   = getPublishedNews(3);
 ?>

@@ -146,7 +146,8 @@ INSERT INTO hero_slides (image, headline_1, headline_2, headline_3, subtitle, ct
 INSERT INTO programmes (title, degree_type, description, duration, image, is_featured, sort_order) VALUES
 ('Gene Therapy', 'MPhil', 'Explore cutting-edge gene therapy techniques and their applications in modern medicine. This programme prepares graduates for careers in genetic research and clinical gene therapy.', '2 years', NULL, 1, 1),
 ('Gene Therapy', 'PhD', 'Conduct advanced research in gene therapy, contributing original knowledge to the field. This doctoral programme is designed for candidates seeking to lead innovation in genetic medicine.', '3-4 years', NULL, 0, 2),
-('Human Embryology', 'MPhil', 'Study the science of human embryonic development and reproductive biology. This programme equips students with expertise in embryology research and assisted reproduction technologies.', '2 years', NULL, 0, 3);
+('Human Embryology', 'MPhil', 'Study the science of human embryonic development and reproductive biology. This programme equips students with expertise in embryology research and assisted reproduction technologies.', '2 years', NULL, 0, 3),
+('Human Embryology', 'PhD', 'Conduct advanced doctoral research in human embryonic development, reproductive biology, and assisted reproduction technologies. This programme prepares candidates to lead innovation in developmental science.', '3-4 years', NULL, 0, 4);
 
 -- =========================================================
 -- Seed Data: News
