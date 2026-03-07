@@ -60,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once 'includes/header.php';
 
 // Fetch documents if logged in
-$files      = [];
+$library    = [];
+$totalFiles = 0;
 $driveError = '';
 if (isLibraryLoggedIn()) {
     $settings = getSettings();
@@ -68,14 +69,16 @@ if (isLibraryLoggedIn()) {
     $folderId = $settings['gdrive_folder_id'] ?? '';
 
     if ($apiKey && $folderId) {
-        $files = getGDriveFiles($folderId, $apiKey);
-        if (empty($files)) {
+        $library = getGDriveLibrary($folderId, $apiKey);
+        $totalFiles = count(flattenLibrary($library));
+        if (empty($library)) {
             $driveError = 'No documents available at this time. Please check back later.';
         }
     } else {
         $driveError = 'The library is being configured. Please check back soon.';
     }
 }
+$categories = array_keys($library);
 ?>
 
 <?php if (!isLibraryLoggedIn()): ?>
@@ -171,7 +174,7 @@ if (isLibraryLoggedIn()) {
     <div class="lib-header-row">
       <div>
         <h1 class="lib-title">E-Library</h1>
-        <p class="lib-sub">Welcome, <strong><?= escape(getLibraryUser()['name']) ?></strong> &mdash; <?= count($files) ?> document<?= count($files) !== 1 ? 's' : '' ?> available</p>
+        <p class="lib-sub">Welcome, <strong><?= escape(getLibraryUser()['name']) ?></strong> &mdash; <?= $totalFiles ?> document<?= $totalFiles !== 1 ? 's' : '' ?> across <?= count($categories) ?> categor<?= count($categories) !== 1 ? 'ies' : 'y' ?></p>
       </div>
       <a href="library.php?logout=1" class="btn btn-outline-dark btn-sm">Sign Out</a>
     </div>
@@ -184,11 +187,9 @@ if (isLibraryLoggedIn()) {
       </div>
       <div class="lib-filters" id="lib-filters">
         <button class="lib-filter active" data-filter="all">All</button>
-        <button class="lib-filter" data-filter="pdf">PDF</button>
-        <button class="lib-filter" data-filter="word">Word</button>
-        <button class="lib-filter" data-filter="excel">Excel</button>
-        <button class="lib-filter" data-filter="ppt">Slides</button>
-        <button class="lib-filter" data-filter="other">Other</button>
+        <?php foreach ($categories as $cat): ?>
+        <button class="lib-filter" data-filter="<?= escape(strtolower(preg_replace('/[^a-z0-9]+/i', '-', $cat))) ?>"><?= escape($cat) ?></button>
+        <?php endforeach; ?>
       </div>
     </div>
   </div>
@@ -204,48 +205,63 @@ if (isLibraryLoggedIn()) {
     </div>
 
     <?php else: ?>
-    <div class="lib-count" id="lib-count"><?= count($files) ?> document<?= count($files) !== 1 ? 's' : '' ?></div>
-    <div class="lib-grid" id="lib-grid">
-      <?php foreach ($files as $i => $file):
-        $fileType   = getFileTypeLabel($file['mimeType'] ?? '');
-        $badgeClass = getFileTypeBadgeClass($file['mimeType'] ?? '');
-        $fileSize   = isset($file['size']) ? formatFileSize((int) $file['size']) : '';
-        $modified   = isset($file['modifiedTime']) ? date('M j, Y', strtotime($file['modifiedTime'])) : '';
-        $previewUrl = getGDrivePreviewUrl($file['id'], $file['mimeType'] ?? '');
-        $fileName   = pathinfo($file['name'], PATHINFO_FILENAME);
-      ?>
-      <a href="library-viewer.php?id=<?= urlencode($file['id']) ?>&type=<?= urlencode($file['mimeType'] ?? '') ?>&name=<?= urlencode($fileName) ?>"
-         class="lib-card fade-up<?= $i < 3 ? ' fade-up-delay-' . $i : '' ?>"
-         data-type="<?= $badgeClass ?>"
-         data-name="<?= escape(strtolower($file['name'])) ?>">
-        <div class="lib-card-icon lib-icon-<?= $badgeClass ?>">
-          <?php if ($badgeClass === 'pdf'): ?>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          <?php elseif ($badgeClass === 'word'): ?>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <?php elseif ($badgeClass === 'excel'): ?>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
-          <?php elseif ($badgeClass === 'ppt'): ?>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><polyline points="8 20 16 20"/><line x1="12" y1="18" x2="12" y2="20"/></svg>
-          <?php else: ?>
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-          <?php endif; ?>
+    <div class="lib-count" id="lib-count"><?= $totalFiles ?> document<?= $totalFiles !== 1 ? 's' : '' ?></div>
+
+    <?php foreach ($library as $category => $files):
+      $catSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $category));
+    ?>
+    <div class="lib-category" data-category="<?= escape($catSlug) ?>">
+      <div class="lib-category-header">
+        <div class="lib-category-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
         </div>
-        <div class="lib-card-body">
-          <h3 class="lib-card-title"><?= escape($fileName) ?></h3>
-          <div class="lib-card-meta">
-            <span class="lib-badge lib-badge-<?= $badgeClass ?>"><?= $fileType ?></span>
-            <?php if ($fileSize): ?><span><?= $fileSize ?></span><?php endif; ?>
-            <?php if ($modified): ?><span><?= $modified ?></span><?php endif; ?>
+        <h2 class="lib-category-title"><?= escape($category) ?></h2>
+        <span class="lib-category-count"><?= count($files) ?> file<?= count($files) !== 1 ? 's' : '' ?></span>
+      </div>
+
+      <div class="lib-grid">
+        <?php foreach ($files as $i => $file):
+          $fileType   = getFileTypeLabel($file['mimeType'] ?? '');
+          $badgeClass = getFileTypeBadgeClass($file['mimeType'] ?? '');
+          $fileSize   = isset($file['size']) ? formatFileSize((int) $file['size']) : '';
+          $modified   = isset($file['modifiedTime']) ? date('M j, Y', strtotime($file['modifiedTime'])) : '';
+          $fileName   = pathinfo($file['name'], PATHINFO_FILENAME);
+        ?>
+        <a href="library-viewer.php?id=<?= urlencode($file['id']) ?>&type=<?= urlencode($file['mimeType'] ?? '') ?>&name=<?= urlencode($fileName) ?>"
+           class="lib-card fade-up"
+           data-type="<?= $badgeClass ?>"
+           data-category="<?= escape($catSlug) ?>"
+           data-name="<?= escape(strtolower($file['name'])) ?>">
+          <div class="lib-card-icon lib-icon-<?= $badgeClass ?>">
+            <?php if ($badgeClass === 'pdf'): ?>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <?php elseif ($badgeClass === 'word'): ?>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <?php elseif ($badgeClass === 'excel'): ?>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+            <?php elseif ($badgeClass === 'ppt'): ?>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><polyline points="8 20 16 20"/><line x1="12" y1="18" x2="12" y2="20"/></svg>
+            <?php else: ?>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            <?php endif; ?>
           </div>
-        </div>
-        <span class="lib-card-action">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          Read
-        </span>
-      </a>
-      <?php endforeach; ?>
+          <div class="lib-card-body">
+            <h3 class="lib-card-title"><?= escape($fileName) ?></h3>
+            <div class="lib-card-meta">
+              <span class="lib-badge lib-badge-<?= $badgeClass ?>"><?= $fileType ?></span>
+              <?php if ($fileSize): ?><span><?= $fileSize ?></span><?php endif; ?>
+              <?php if ($modified): ?><span><?= $modified ?></span><?php endif; ?>
+            </div>
+          </div>
+          <span class="lib-card-action">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Read
+          </span>
+        </a>
+        <?php endforeach; ?>
+      </div>
     </div>
+    <?php endforeach; ?>
 
     <div class="lib-no-results" id="lib-no-results" style="display:none;">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -269,26 +285,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Search & filter
-  const search    = document.getElementById('lib-search');
-  const grid      = document.getElementById('lib-grid');
-  const countEl   = document.getElementById('lib-count');
-  const noResults = document.getElementById('lib-no-results');
-  if (!search || !grid) return;
+  // Search & filter by category
+  const search     = document.getElementById('lib-search');
+  const countEl    = document.getElementById('lib-count');
+  const noResults  = document.getElementById('lib-no-results');
+  const categories = document.querySelectorAll('.lib-category');
+  const allCards   = document.querySelectorAll('.lib-card');
+  if (!search || !allCards.length) return;
 
   let activeFilter = 'all';
 
   function filterDocs() {
-    const q     = search.value.toLowerCase().trim();
-    const cards = grid.querySelectorAll('.lib-card');
-    let vis     = 0;
+    const q   = search.value.toLowerCase().trim();
+    let vis   = 0;
 
-    cards.forEach(card => {
-      const name = card.dataset.name || '';
-      const type = card.dataset.type || '';
-      const ok   = (!q || name.includes(q)) && (activeFilter === 'all' || type === activeFilter);
-      card.style.display = ok ? '' : 'none';
-      if (ok) vis++;
+    categories.forEach(cat => {
+      const catSlug = cat.dataset.category || '';
+      const matchesCat = activeFilter === 'all' || catSlug === activeFilter;
+      const cards = cat.querySelectorAll('.lib-card');
+      let catVisible = 0;
+
+      cards.forEach(card => {
+        const name = card.dataset.name || '';
+        const ok   = matchesCat && (!q || name.includes(q));
+        card.style.display = ok ? '' : 'none';
+        if (ok) { vis++; catVisible++; }
+      });
+
+      // Hide entire category section if no cards visible
+      cat.style.display = catVisible > 0 ? '' : 'none';
     });
 
     if (countEl) countEl.textContent = vis + ' document' + (vis !== 1 ? 's' : '') + (q ? ' found' : '');

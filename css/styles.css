@@ -2903,7 +2903,55 @@ textarea.form-input {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--gray-400);
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+}
+
+/* Category Sections */
+.lib-category {
+  margin-bottom: 40px;
+}
+
+.lib-category:last-child {
+  margin-bottom: 0;
+}
+
+.lib-category-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.lib-category-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lib-category-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -0.02em;
+}
+
+.lib-category-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-400);
+  margin-left: auto;
 }
 
 .lib-grid {

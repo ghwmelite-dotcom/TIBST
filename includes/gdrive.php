@@ -2,7 +2,7 @@
 /**
  * Google Drive API Helper
  *
- * Fetches file listings from a public shared folder.
+ * Fetches file listings from a public shared folder, including subfolders.
  * Caches results to a JSON file to avoid hitting API rate limits.
  */
 
@@ -10,30 +10,13 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/functions.php';
 
 /**
- * Fetch files from a Google Drive folder.
- *
- * @param  string $folderId  Google Drive folder ID
- * @param  string $apiKey    Google API key
- * @param  int    $cacheTtl  Cache lifetime in seconds (default 1 hour)
- * @return array             Array of file objects
+ * Fetch a single level of items from a Google Drive folder via API.
  */
-function getGDriveFiles(string $folderId, string $apiKey, int $cacheTtl = 3600): array
+function gdriveApiFetch(string $folderId, string $apiKey): array
 {
-    $cacheDir  = dirname(__DIR__) . '/cache';
-    $cacheFile = $cacheDir . '/gdrive_' . md5($folderId) . '.json';
-
-    // Return cached data if fresh
-    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTtl) {
-        $data = json_decode(file_get_contents($cacheFile), true);
-        if (is_array($data)) {
-            return $data;
-        }
-    }
-
-    // Fetch from Google Drive API
     $fields = 'files(id,name,mimeType,size,modifiedTime,iconLink,webViewLink,thumbnailLink,description)';
     $query  = urlencode("'{$folderId}' in parents and trashed = false");
-    $url    = "https://www.googleapis.com/drive/v3/files?q={$query}&key={$apiKey}&fields={$fields}&pageSize=100&orderBy=name";
+    $url    = "https://www.googleapis.com/drive/v3/files?q={$query}&key={$apiKey}&fields={$fields}&pageSize=200&orderBy=name";
 
     $ch = curl_init();
     curl_setopt_array($ch, [
@@ -49,7 +32,39 @@ function getGDriveFiles(string $folderId, string $apiKey, int $cacheTtl = 3600):
     curl_close($ch);
 
     if ($httpCode !== 200 || !$response) {
-        // If API fails, return cached data even if stale
+        return [];
+    }
+
+    $json = json_decode($response, true);
+    return $json['files'] ?? [];
+}
+
+/**
+ * Fetch files from a Google Drive folder, recursing into subfolders.
+ * Returns an associative array: [ 'Category Name' => [files...], ... ]
+ * Files in the root folder go under 'General'.
+ *
+ * @param  string $folderId  Google Drive folder ID
+ * @param  string $apiKey    Google API key
+ * @param  int    $cacheTtl  Cache lifetime in seconds (default 1 hour)
+ * @return array             [ category => [file, ...], ... ]
+ */
+function getGDriveLibrary(string $folderId, string $apiKey, int $cacheTtl = 3600): array
+{
+    $cacheDir  = dirname(__DIR__) . '/cache';
+    $cacheFile = $cacheDir . '/gdrive_lib_' . md5($folderId) . '.json';
+
+    // Return cached data if fresh
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTtl) {
+        $data = json_decode(file_get_contents($cacheFile), true);
+        if (is_array($data)) {
+            return $data;
+        }
+    }
+
+    $items = gdriveApiFetch($folderId, $apiKey);
+    if (empty($items)) {
+        // Return stale cache if available
         if (file_exists($cacheFile)) {
             $data = json_decode(file_get_contents($cacheFile), true);
             return is_array($data) ? $data : [];
@@ -57,16 +72,56 @@ function getGDriveFiles(string $folderId, string $apiKey, int $cacheTtl = 3600):
         return [];
     }
 
-    $json = json_decode($response, true);
-    $files = $json['files'] ?? [];
+    $library = [];
+    $folders = [];
+    $rootFiles = [];
+
+    // Separate folders from files
+    foreach ($items as $item) {
+        if (($item['mimeType'] ?? '') === 'application/vnd.google-apps.folder') {
+            $folders[] = $item;
+        } else {
+            $rootFiles[] = $item;
+        }
+    }
+
+    // Fetch files inside each subfolder (category)
+    foreach ($folders as $folder) {
+        $categoryName = $folder['name'];
+        $subFiles = gdriveApiFetch($folder['id'], $apiKey);
+        // Filter out sub-subfolders, keep only files
+        $subFiles = array_filter($subFiles, fn($f) => ($f['mimeType'] ?? '') !== 'application/vnd.google-apps.folder');
+        if (!empty($subFiles)) {
+            $library[$categoryName] = array_values($subFiles);
+        }
+    }
+
+    // Add root-level files under "General" if any
+    if (!empty($rootFiles)) {
+        $library = array_merge(['General' => $rootFiles], $library);
+    }
 
     // Cache the results
     if (!is_dir($cacheDir)) {
         mkdir($cacheDir, 0755, true);
     }
-    file_put_contents($cacheFile, json_encode($files, JSON_PRETTY_PRINT));
+    file_put_contents($cacheFile, json_encode($library, JSON_PRETTY_PRINT));
 
-    return $files;
+    return $library;
+}
+
+/**
+ * Get a flat list of all files across categories (for counting).
+ */
+function flattenLibrary(array $library): array
+{
+    $all = [];
+    foreach ($library as $files) {
+        foreach ($files as $file) {
+            $all[] = $file;
+        }
+    }
+    return $all;
 }
 
 /**
@@ -129,7 +184,6 @@ function formatFileSize(int $bytes): string
  */
 function getGDrivePreviewUrl(string $fileId, string $mimeType = ''): string
 {
-    // Google native docs use a different preview URL
     if (str_contains($mimeType, 'google-apps.document')) {
         return "https://docs.google.com/document/d/{$fileId}/preview";
     }
@@ -140,6 +194,5 @@ function getGDrivePreviewUrl(string $fileId, string $mimeType = ''): string
         return "https://docs.google.com/presentation/d/{$fileId}/preview";
     }
 
-    // PDFs and other files use the generic preview
     return "https://drive.google.com/file/d/{$fileId}/preview";
 }
