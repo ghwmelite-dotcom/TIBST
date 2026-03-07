@@ -1871,43 +1871,25 @@ textarea.form-input {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== HOMEPAGE V3 — PROGRAMMES CAROUSEL ===== */
+/* ===== HOMEPAGE V3 — PROGRAMMES GRID ===== */
 .programmes-section {
   background: var(--off-white);
 }
 
-.prog-carousel {
-  display: flex;
+.prog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 8px 24px 24px;
-  margin: 0 -24px;
 }
 
-.prog-carousel::-webkit-scrollbar { display: none; }
-
 .prog-card {
-  flex-shrink: 0;
-  width: 340px;
   background: var(--white);
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid var(--gray-100);
-  scroll-snap-align: start;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-}
-
-.prog-card:first-child {
-  margin-left: max(24px, calc((100vw - 1280px) / 2));
-}
-
-.prog-card:last-child {
-  margin-right: max(24px, calc((100vw - 1280px) / 2));
 }
 
 .prog-card:hover {
@@ -2460,7 +2442,7 @@ textarea.form-input {
   .features-v3 { grid-template-columns: repeat(2, 1fr); }
   .feature-v3-lg { grid-row: auto; grid-column: 1 / -1; }
 
-  .prog-card { width: 300px; }
+  .prog-grid { grid-template-columns: repeat(2, 1fr); }
 
   .news-editorial { grid-template-columns: 1fr; }
   .news-editorial-feature { min-height: 360px; }
@@ -2484,7 +2466,7 @@ textarea.form-input {
   .features-v3 { grid-template-columns: 1fr; }
   .feature-v3-lg { grid-column: auto; }
 
-  .prog-card { width: 280px; }
+  .prog-grid { grid-template-columns: 1fr; }
 
   .testimonials-marquee-section { padding: 60px 0; }
   .testimonial-marquee-card { width: 320px; padding: 28px; }
@@ -2505,7 +2487,7 @@ textarea.form-input {
   .hero-v3-stat { padding: 18px 12px; }
   .hero-v3-stat-num { font-size: 1.6rem; }
   .hero-v3-stat-label { font-size: 0.6rem; }
-  .prog-card { width: 260px; }
+  .prog-grid { gap: 16px; }
 }
 /* ===== SCROLL ANIMATIONS ===== */
 .fade-up {
