@@ -60,12 +60,18 @@ function getActiveSlides(): array
 
 /**
  * Get featured programmes ordered by sort_order.
+ * Falls back to all programmes if none are marked featured.
  */
 function getFeaturedProgrammes(): array
 {
     $pdo  = getDB();
     $stmt = $pdo->query('SELECT * FROM programmes WHERE is_featured = 1 ORDER BY sort_order');
-    return $stmt->fetchAll();
+    $results = $stmt->fetchAll();
+    if (empty($results)) {
+        $stmt = $pdo->query('SELECT * FROM programmes ORDER BY sort_order');
+        $results = $stmt->fetchAll();
+    }
+    return $results;
 }
 
 /**
