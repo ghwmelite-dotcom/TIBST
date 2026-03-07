@@ -1,0 +1,67 @@
+/* Carousel Override Styles */
+
+.testimonial-marquee-track {
+  position: relative;
+}
+
+/* Hide scrollbar */
+.testimonial-marquee-inner {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.testimonial-marquee-inner::-webkit-scrollbar {
+  display: none;
+}
+
+/* Arrow buttons */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: opacity 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.carousel-arrow:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.18);
+}
+
+.carousel-arrow.prev {
+  left: 16px;
+}
+
+.carousel-arrow.next {
+  right: 16px;
+}
+
+.carousel-arrow svg {
+  width: 20px;
+  height: 20px;
+  stroke: #4E9B17;
+  stroke-width: 2;
+  fill: none;
+}
+
+.carousel-arrow.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Mobile: hide arrows, rely on touch */
+@media (max-width: 768px) {
+  .carousel-arrow {
+    display: none;
+  }
+}

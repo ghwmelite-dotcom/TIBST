@@ -28,6 +28,17 @@ $youtube   = escape($settings['youtube']   ?? 'https://youtube.com');
   <title><?= escape($pageTitle) ?></title>
   <meta name="description" content="Thrivus Institute of Biomedical Sciences & Technology - Your career starts with us. Offering MPhil and PhD programmes in Gene Therapy and Human Embryology.">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/loader.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/bento.css">
+  <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/timeline.css">
+  <link rel="stylesheet" href="css/nav-footer.css">
+  <link rel="stylesheet" href="css/comparison.css">
+  <link rel="stylesheet" href="css/research-viz.css">
+  <link rel="stylesheet" href="css/gallery-lightbox.css">
+  <link rel="stylesheet" href="css/dark-mode.css">
 <?php if (!empty($settings['site_favicon'])): ?>
   <link rel="icon" href="<?= escape($settings['site_favicon']) ?>">
 <?php else: ?>

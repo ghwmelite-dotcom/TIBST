@@ -1,0 +1,180 @@
+/* ============================================
+   Gallery Lightbox — Premium Fullscreen Viewer
+   ============================================ */
+
+/* Overlay */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+.lightbox.visible {
+  opacity: 1;
+}
+
+/* Shared button reset */
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: white;
+  transition: opacity 0.25s ease, background-color 0.25s ease, transform 0.2s ease;
+  padding: 0;
+  outline: none;
+}
+
+/* Close button */
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  font-size: 2rem;
+  line-height: 48px;
+  text-align: center;
+  z-index: 10002;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.lightbox-close:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Prev / Next buttons */
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10002;
+  opacity: 0.85;
+}
+
+.lightbox-prev {
+  left: 20px;
+}
+
+.lightbox-next {
+  right: 20px;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  background: rgba(255, 255, 255, 1);
+  color: #111;
+  opacity: 1;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.lightbox-prev svg,
+.lightbox-next svg {
+  display: block;
+}
+
+/* Content area */
+.lightbox-content {
+  max-width: 90vw;
+  max-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Image */
+.lightbox-img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  border-radius: 4px;
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: lightbox-entry 0.35s ease forwards;
+}
+
+.lightbox-img.zoomed {
+  cursor: zoom-out;
+  transform: scale(1.5);
+}
+
+/* Entry animation */
+@keyframes lightbox-entry {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Crossfade helper */
+.lightbox-img.fading {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Counter */
+.lightbox-counter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  z-index: 10001;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Gallery items — indicate clickability */
+.gallery-item {
+  cursor: pointer;
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 768px) {
+  .lightbox-prev,
+  .lightbox-next {
+    display: none;
+  }
+
+  .lightbox-counter {
+    font-size: 0.75rem;
+  }
+
+  .lightbox-close {
+    top: 10px;
+    right: 10px;
+    width: 42px;
+    height: 42px;
+    font-size: 1.75rem;
+    line-height: 42px;
+  }
+}

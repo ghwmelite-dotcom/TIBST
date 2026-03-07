@@ -178,48 +178,65 @@ foreach ($list as $i => $prog):
         <p class="section-subtitle">No matter which career path you choose, your experience at TIBST will give you a basis for success.</p>
       </div>
 
-      <div class="features-grid-v4">
-        <div class="feature-card-v4 fade-up">
-          <div class="feature-card-v4-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <div class="bento-grid">
+        <div class="bento-card bento-wide fade-up">
+          <div class="bento-card-deco"></div>
+          <div class="bento-card-inner">
+            <div class="feature-card-v4-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3>World-Class Research</h3>
+            <p>Access cutting-edge research facilities and collaborate with leading scientists in gene therapy and human embryology.</p>
           </div>
-          <h3>World-Class Research</h3>
-          <p>Access cutting-edge research facilities and collaborate with leading scientists in gene therapy and human embryology.</p>
         </div>
-        <div class="feature-card-v4 fade-up fade-up-delay-1">
-          <div class="feature-card-v4-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <div class="bento-card fade-up fade-up-delay-1">
+          <div class="bento-card-inner">
+            <div class="feature-card-v4-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3>Expert Faculty</h3>
+            <p>Learn from distinguished academics who are leaders in their respective biomedical fields.</p>
           </div>
-          <h3>Expert Faculty</h3>
-          <p>Learn from distinguished academics who are leaders in their respective biomedical fields.</p>
         </div>
-        <div class="feature-card-v4 fade-up fade-up-delay-2">
-          <div class="feature-card-v4-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div class="bento-card fade-up fade-up-delay-2">
+          <div class="bento-card-inner">
+            <div class="feature-card-v4-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <h3>Global Impact</h3>
+            <p>Our research and graduates contribute to advancing healthcare solutions across Africa and the world.</p>
           </div>
-          <h3>Global Impact</h3>
-          <p>Our research and graduates contribute to advancing healthcare solutions across Africa and the world.</p>
         </div>
-        <div class="feature-card-v4 fade-up">
-          <div class="feature-card-v4-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <div class="bento-card bento-tall fade-up">
+          <div class="bento-card-inner">
+            <div class="feature-card-v4-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <h3>Hands-On Training</h3>
+            <p>Gain practical laboratory experience through our translational research units and state-of-the-art facilities.</p>
+            <div class="bento-stat">
+              <span class="bento-stat-num">3</span>
+              <span class="bento-stat-label">Research<br>Units</span>
+            </div>
           </div>
-          <h3>Hands-On Training</h3>
-          <p>Gain practical laboratory experience through our translational research units and state-of-the-art facilities.</p>
         </div>
-        <div class="feature-card-v4 fade-up fade-up-delay-1">
-          <div class="feature-card-v4-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <div class="bento-card fade-up fade-up-delay-1">
+          <div class="bento-card-inner">
+            <div class="feature-card-v4-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <h3>Rich Library Resources</h3>
+            <p>Access an extensive collection of biomedical journals, databases, and digital resources to support your research.</p>
           </div>
-          <h3>Rich Library Resources</h3>
-          <p>Access an extensive collection of biomedical journals, databases, and digital resources to support your research.</p>
         </div>
-        <div class="feature-card-v4 fade-up fade-up-delay-2">
-          <div class="feature-card-v4-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="bento-card fade-up fade-up-delay-2">
+          <div class="bento-card-inner">
+            <div class="feature-card-v4-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Financial Support</h3>
+            <p>Benefit from our financial aid and sponsorship programmes designed to make quality education accessible.</p>
           </div>
-          <h3>Financial Support</h3>
-          <p>Benefit from our financial aid and sponsorship programmes designed to make quality education accessible.</p>
         </div>
       </div>
     </div>

@@ -1,0 +1,112 @@
+/* =============================================
+   TIBST Visual Effects
+   effects.css — Scroll splits, parallax, tilt, cursor
+   ============================================= */
+
+/* ===== FEATURE 1: TEXT SPLIT ANIMATIONS ===== */
+
+.text-split-word {
+  display: inline-block;
+  clip-path: inset(0 100% 0 0);
+  opacity: 0;
+  transition: clip-path 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.4s ease;
+  will-change: clip-path, opacity;
+}
+
+.text-split-word.text-split-visible {
+  clip-path: inset(0 0% 0 0);
+  opacity: 1;
+}
+
+
+/* ===== FEATURE 2: PARALLAX DEPTH ===== */
+
+.uni-hero-bg,
+.stats-band-bg {
+  will-change: transform;
+}
+
+
+/* ===== FEATURE 3: 3D TILT ON PROGRAMME CARDS ===== */
+
+@media (min-width: 1025px) {
+  .prog-card-v6 {
+    transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99),
+                box-shadow 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+    transform-style: preserve-3d;
+    will-change: transform, box-shadow;
+  }
+
+  .prog-card-v6.tilt-active {
+    transition: none;
+  }
+
+  .prog-card-v6.tilt-reset {
+    transition: transform 0.5s cubic-bezier(0.03, 0.98, 0.52, 0.99),
+                box-shadow 0.5s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+  }
+}
+
+
+/* ===== FEATURE 4: CUSTOM CURSOR ===== */
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4E9B17;
+  opacity: 0.5;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%) scale(1);
+  transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.3s ease;
+  will-change: transform;
+  display: none;
+}
+
+.custom-cursor.active {
+  display: block;
+}
+
+.custom-cursor.cursor-hover {
+  width: 60px;
+  height: 60px;
+}
+
+.cursor-target-active {
+  cursor: none !important;
+}
+
+.cursor-target-active a,
+.cursor-target-active button,
+.cursor-target-active .btn-primary,
+.cursor-target-active .btn-outline-glass,
+.cursor-target-active .btn-white {
+  cursor: none !important;
+}
+
+/* Hide custom cursor on touch devices */
+@media (pointer: coarse) {
+  .custom-cursor {
+    display: none !important;
+  }
+
+  .cursor-target-active {
+    cursor: auto !important;
+  }
+
+  .cursor-target-active a,
+  .cursor-target-active button,
+  .cursor-target-active .btn-primary,
+  .cursor-target-active .btn-outline-glass,
+  .cursor-target-active .btn-white {
+    cursor: pointer !important;
+  }
+}

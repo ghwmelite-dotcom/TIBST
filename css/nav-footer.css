@@ -1,0 +1,69 @@
+/* =============================================
+   Nav & Footer Enhancements — nav-footer.css
+   ============================================= */
+
+/* Smart Hide/Show Nav */
+.main-header {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, backdrop-filter 0.3s ease !important;
+}
+
+.main-header.header-hidden {
+  transform: translateY(-100%);
+}
+
+.main-header.header-blur {
+  background: rgba(255,255,255,0.85) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .main-header.header-blur {
+  background: rgba(17,17,17,0.85) !important;
+}
+
+/* Footer Map */
+.footer-map {
+  margin-bottom: 16px;
+  max-width: 160px;
+}
+
+.footer-map-svg {
+  width: 100%;
+  height: auto;
+}
+
+.footer-map-pin {
+  animation: mapPinPulse 2s ease-in-out infinite;
+}
+
+.footer-map-pulse {
+  animation: mapRingPulse 2s ease-in-out infinite;
+}
+
+@keyframes mapPinPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes mapRingPulse {
+  0% { r: 10; opacity: 0.4; }
+  100% { r: 18; opacity: 0; }
+}
+
+/* News card enhanced hover */
+.news-card-v4::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.news-card-v4:hover::after {
+  transform: scaleX(1);
+}

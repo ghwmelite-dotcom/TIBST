@@ -1,0 +1,254 @@
+/* ============================================================
+   Research Impact Data Visualization
+   ============================================================ */
+
+/* --- Grid Layout --- */
+.research-viz-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.research-viz-grid .research-viz-panel--map {
+  grid-column: 1 / -1;
+}
+
+/* --- Panel --- */
+.research-viz-panel {
+  background: var(--white, #ffffff);
+  border-radius: 16px;
+  border: 1px solid var(--gray-100, #f3f4f6);
+  padding: 32px;
+}
+
+.research-viz-panel h3 {
+  font-family: var(--font-display, 'Syne', sans-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+/* --- Publication Growth Bar Chart --- */
+.pub-bars-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pub-bar {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pub-bar-label {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  color: var(--gray-500, #6b7280);
+  min-width: 40px;
+}
+
+.pub-bar-track {
+  flex: 1;
+  height: 100%;
+  background: var(--gray-100, #f3f4f6);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pub-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary, #4E9B17), var(--accent, #C5E063));
+  border-radius: 4px;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pub-bar-fill.animate {
+  transform: scaleX(1);
+}
+
+.pub-bar-count {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary, #4E9B17);
+  min-width: 28px;
+  text-align: right;
+}
+
+/* --- Research Areas Bubble Chart --- */
+.bubble-area {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.research-bubble {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-family: var(--font-body, 'Manrope', sans-serif);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transform: scale(0);
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  position: relative;
+  line-height: 1.2;
+  padding: 10px;
+}
+
+.research-bubble.animate {
+  transform: scale(1);
+}
+
+.research-bubble:hover {
+  transform: scale(1.1) !important;
+}
+
+/* Tooltip */
+.research-bubble .bubble-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-dark, #3A7A11);
+  color: #fff;
+  font-family: var(--font-body, 'Manrope', sans-serif);
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.research-bubble .bubble-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--primary-dark, #3A7A11);
+}
+
+.research-bubble:hover .bubble-tooltip {
+  opacity: 1;
+}
+
+/* --- Global Collaboration Map --- */
+.collab-map svg {
+  width: 100%;
+  height: auto;
+}
+
+.collab-map .map-path {
+  fill: none;
+  stroke: var(--gray-200, #e5e7eb);
+  stroke-width: 0.5;
+}
+
+.collab-map .connection-line {
+  stroke: var(--primary, #4E9B17);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  fill: none;
+}
+
+.collab-map .location-dot {
+  fill: var(--primary, #4E9B17);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.collab-map .location-dot--accra {
+  fill: var(--primary, #4E9B17);
+}
+
+.collab-map .location-label {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 9px;
+  fill: var(--gray-500, #6b7280);
+}
+
+.collab-map-labels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.collab-map-labels span {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  color: var(--gray-500, #6b7280);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.collab-map-labels span::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary, #4E9B17);
+}
+
+/* Connection line drawing animation */
+.connection-line {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  transition: stroke-dashoffset 1.5s ease-in-out;
+}
+
+.connection-line.animate {
+  stroke-dashoffset: 0;
+}
+
+/* Pulse keyframe */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    r: 4;
+  }
+  50% {
+    opacity: 0.5;
+    r: 6;
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .research-viz-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .research-viz-panel {
+    padding: 20px;
+  }
+
+  .research-bubble {
+    font-size: 0.65rem;
+    padding: 6px;
+  }
+
+  .bubble-area {
+    gap: 10px;
+    padding: 12px;
+  }
+}

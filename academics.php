@@ -287,6 +287,18 @@ $certProgs = array_filter($allProgrammes, function($p) {
     </div>
   </section>
 
+  <!-- PROGRAMME COMPARISON TOOL -->
+  <section class="section" style="background: var(--white);">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-label">Compare</div>
+        <h2 class="section-title">Compare Programmes</h2>
+        <p class="section-subtitle">Not sure which programme is right for you? Compare our offerings side by side to find the perfect fit for your career goals.</p>
+      </div>
+      <div id="programme-compare" class="fade-up"></div>
+    </div>
+  </section>
+
   <!-- DEPARTMENT INFORMATION -->
   <section class="section" style="background: var(--off-white);">
     <div class="container">

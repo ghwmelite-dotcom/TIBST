@@ -98,7 +98,17 @@ $_footerYoutube   = escape($_footerSettings['youtube']   ?? 'https://youtube.com
     </div>
   </footer>
 
+  <script src="js/loader.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/transitions.js"></script>
+  <script src="js/carousel.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/nav-footer.js"></script>
+  <script src="js/comparison.js"></script>
+  <script src="js/research-viz.js"></script>
+  <script src="js/gallery-lightbox.js"></script>
+  <script src="js/dark-mode.js"></script>
   <script src="js/chatbot.js"></script>
 </body>
 </html>

@@ -168,6 +168,18 @@ $researchPubs     = getPageBlock('research', 'publications');
     </div>
   </section>
 
+  <!-- RESEARCH IMPACT VISUALIZATION -->
+  <section class="section" style="background: var(--off-white);">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-label">Our Impact</div>
+        <h2 class="section-title">Research at a Glance</h2>
+        <p class="section-subtitle">Visualizing our growing contribution to the global body of biomedical knowledge.</p>
+      </div>
+      <div id="research-impact-viz" class="fade-up"></div>
+    </div>
+  </section>
+
   <!-- PUBLICATIONS -->
   <section class="section" id="publications" style="background: var(--gray-50);">
     <div class="container">
