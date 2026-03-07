@@ -45,6 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="login-page">
     <div class="login-card">
         <div class="login-header">
+            <div class="login-logo-mark">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white"/>
+                    <path d="M2 17l10 5 10-5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12l10 5 10-5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
             <h1>TIB<span>ST</span></h1>
             <p>Administration Panel</p>
         </div>
@@ -64,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="email"
                         name="email"
                         class="form-input"
-                        placeholder="you@tibst.edu.et"
+                        placeholder="you@thrivusinstitute.edu.gh"
                         value="<?= escape($_POST['email'] ?? '') ?>"
                         required
                         autofocus
