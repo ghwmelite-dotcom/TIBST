@@ -1653,14 +1653,13 @@ textarea.form-input {
   margin: 0 auto;
   padding: 0 24px;
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 60px;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }
 
 .hero-cinematic-left {
-  max-width: 680px;
+  max-width: 720px;
 }
 
 /* Badge V2 */
@@ -1759,39 +1758,54 @@ textarea.form-input {
 
 /* Hero Stat Cards */
 .hero-cinematic-right {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  display: flex;
+  gap: 1px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
 }
 
 .hero-stat-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 28px 20px;
+  flex: 1;
+  padding: 32px 24px;
   text-align: center;
-  backdrop-filter: blur(20px);
-  transition: all 0.4s ease;
+  background: rgba(255,255,255,0.02);
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-stat-card::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+.hero-stat-card:last-child::after {
+  display: none;
 }
 
 .hero-stat-card:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(78,155,23,0.3);
-  transform: translateY(-4px);
+  background: rgba(78,155,23,0.08);
 }
 
 .hero-stat-accent {
-  background: rgba(78,155,23,0.12);
-  border-color: rgba(78,155,23,0.25);
+  background: rgba(78,155,23,0.06);
 }
 
 .hero-stat-number {
   font-family: var(--font-display);
-  font-size: 2.6rem;
+  font-size: 2.4rem;
   font-weight: 800;
   color: var(--white);
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   letter-spacing: -0.04em;
 }
 
@@ -1801,11 +1815,11 @@ textarea.form-input {
 
 .hero-stat-label {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: var(--gray-500);
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.45);
   font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
 }
 
 /* Hero Animations */
@@ -2386,13 +2400,15 @@ textarea.form-input {
 /* ===== HOMEPAGE — RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .hero-cinematic-content {
-    grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 32px;
   }
 
   .hero-cinematic-right {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat-card {
+    flex: 1 1 40%;
   }
 
   .hero-stat-card { padding: 20px 16px; }
@@ -2432,7 +2448,11 @@ textarea.form-input {
   }
 
   .hero-cinematic-right {
-    grid-template-columns: repeat(2, 1fr);
+    flex-wrap: wrap;
+  }
+
+  .hero-stat-card {
+    flex: 1 1 40%;
   }
 
   .hero-cinematic-actions {
@@ -2501,13 +2521,21 @@ textarea.form-input {
   }
 
   .hero-cinematic-right {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    flex-wrap: wrap;
+    border-radius: 14px;
   }
 
-  .hero-stat-card { padding: 16px 12px; }
+  .hero-stat-card {
+    flex: 1 1 40%;
+    padding: 20px 12px;
+  }
+
+  .hero-stat-card::after {
+    display: none;
+  }
+
   .hero-stat-number { font-size: 1.8rem; }
-  .hero-stat-label { font-size: 0.7rem; }
+  .hero-stat-label { font-size: 0.65rem; }
 }
 
 /* ===== HERO SLIDER ===== */

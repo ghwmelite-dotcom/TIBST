@@ -5,7 +5,7 @@ CONFIG_FILE="/var/www/html/includes/config.php"
 
 # Wait for MySQL to be fully ready (beyond just healthcheck)
 echo "Waiting for MySQL to accept connections..."
-until mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" --ssl-mode=DISABLED -e "SELECT 1" &>/dev/null; do
+until mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" --skip-ssl -e "SELECT 1" &>/dev/null; do
     sleep 2
 done
 echo "MySQL is ready."
@@ -15,7 +15,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
     echo "First run detected — setting up TIBST CMS..."
 
     # Run schema
-    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" --ssl-mode=DISABLED "$DB_NAME" < /var/www/html/schema.sql
+    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" --skip-ssl "$DB_NAME" < /var/www/html/schema.sql
     echo "Database tables created and seeded."
 
     # Create admin user via PHP

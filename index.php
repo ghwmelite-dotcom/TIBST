@@ -50,20 +50,20 @@ $latestNews   = getPublishedNews(3);
           </div>
 
           <?php if ($i === 0): ?>
-          <div class="hero-cinematic-right">
-            <div class="hero-stat-card hero-anim-6" style="--delay: 0.6s">
+          <div class="hero-cinematic-right hero-anim-6" style="--delay: 0.6s">
+            <div class="hero-stat-card">
               <div class="hero-stat-number" data-count="5" data-suffix="+">0</div>
               <div class="hero-stat-label">Programmes</div>
             </div>
-            <div class="hero-stat-card hero-anim-6" style="--delay: 0.75s">
+            <div class="hero-stat-card">
               <div class="hero-stat-number" data-count="50" data-suffix="+">0</div>
               <div class="hero-stat-label">Researchers</div>
             </div>
-            <div class="hero-stat-card hero-anim-6" style="--delay: 0.9s">
+            <div class="hero-stat-card">
               <div class="hero-stat-number" data-count="3">0</div>
               <div class="hero-stat-label">Research Units</div>
             </div>
-            <div class="hero-stat-card hero-stat-accent hero-anim-6" style="--delay: 1.05s">
+            <div class="hero-stat-card hero-stat-accent">
               <div class="hero-stat-number" data-count="100" data-suffix="%">0</div>
               <div class="hero-stat-label">Dedication</div>
             </div>
@@ -125,20 +125,20 @@ $latestNews   = getPublishedNews(3);
         </div>
       </div>
 
-      <div class="hero-cinematic-right">
-        <div class="hero-stat-card hero-anim-6" style="--delay: 0.6s">
+      <div class="hero-cinematic-right hero-anim-6" style="--delay: 0.6s">
+        <div class="hero-stat-card">
           <div class="hero-stat-number" data-count="5" data-suffix="+">0</div>
           <div class="hero-stat-label">Programmes</div>
         </div>
-        <div class="hero-stat-card hero-anim-6" style="--delay: 0.75s">
+        <div class="hero-stat-card">
           <div class="hero-stat-number" data-count="50" data-suffix="+">0</div>
           <div class="hero-stat-label">Researchers</div>
         </div>
-        <div class="hero-stat-card hero-anim-6" style="--delay: 0.9s">
+        <div class="hero-stat-card">
           <div class="hero-stat-number" data-count="3">0</div>
           <div class="hero-stat-label">Research Units</div>
         </div>
-        <div class="hero-stat-card hero-stat-accent hero-anim-6" style="--delay: 1.05s">
+        <div class="hero-stat-card hero-stat-accent">
           <div class="hero-stat-number" data-count="100" data-suffix="%">0</div>
           <div class="hero-stat-label">Dedication</div>
         </div>
