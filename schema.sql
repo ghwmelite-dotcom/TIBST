@@ -128,7 +128,9 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 ('youtube', 'https://www.youtube.com/@thrivusinstitute'),
 ('whatsapp', 'https://wa.me/233277715058'),
 ('gdrive_api_key', ''),
-('gdrive_folder_id', '11FR2Wo7SDOhI30H59agJK-qBE41cYcx3');
+('gdrive_folder_id', '11FR2Wo7SDOhI30H59agJK-qBE41cYcx3'),
+('site_logo', ''),
+('site_favicon', '');
 
 -- =========================================================
 -- Seed Data: Hero Slide

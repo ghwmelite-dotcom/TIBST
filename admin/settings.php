@@ -21,6 +21,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([trim($value), $key]);
     }
 
+    // Handle file uploads (logo & favicon)
+    $fileSettings = ['site_logo', 'site_favicon'];
+    foreach ($fileSettings as $key) {
+        if (isset($_FILES[$key]) && $_FILES[$key]['error'] === UPLOAD_ERR_OK) {
+            $path = uploadImage($key);
+            if ($path !== false) {
+                // Delete old file if it exists
+                $oldVal = $settings[$key] ?? '';
+                if ($oldVal && file_exists(dirname(__DIR__) . '/' . $oldVal)) {
+                    @unlink(dirname(__DIR__) . '/' . $oldVal);
+                }
+                // Upsert setting
+                $stmt = $pdo->prepare('INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)');
+                $stmt->execute([$key, $path]);
+            }
+        }
+    }
+
     flashMessage('Settings updated.');
     header('Location: /admin/settings.php');
     exit;
@@ -34,8 +52,33 @@ $settings = getSettings();
 </div>
 
 <div class="admin-card">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <?= csrfField() ?>
+
+        <h3 class="form-section-title">Site Branding</h3>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Site Logo</label>
+                <?php if (!empty($settings['site_logo'])): ?>
+                <div style="margin-bottom: 10px;">
+                    <img src="/<?= escape($settings['site_logo']) ?>" alt="Current logo" style="max-height: 60px; border-radius: 8px; border: 1px solid #E2E0D8; padding: 6px; background: #fff;">
+                </div>
+                <?php endif; ?>
+                <input type="file" name="site_logo" accept="image/*" class="form-input" style="padding: 8px;">
+                <span class="form-hint">Recommended: PNG or SVG with transparent background, at least 200px wide.</span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Favicon</label>
+                <?php if (!empty($settings['site_favicon'])): ?>
+                <div style="margin-bottom: 10px;">
+                    <img src="/<?= escape($settings['site_favicon']) ?>" alt="Current favicon" style="max-height: 40px; border-radius: 6px; border: 1px solid #E2E0D8; padding: 4px; background: #fff;">
+                </div>
+                <?php endif; ?>
+                <input type="file" name="site_favicon" accept="image/*,.ico" class="form-input" style="padding: 8px;">
+                <span class="form-hint">Recommended: 32&times;32 or 64&times;64 PNG, ICO, or SVG.</span>
+            </div>
+        </div>
 
         <h3 class="form-section-title">Site Information</h3>
 

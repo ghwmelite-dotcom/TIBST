@@ -22,10 +22,14 @@ $_footerYoutube   = escape($_footerSettings['youtube']   ?? 'https://youtube.com
       <div class="footer-grid">
         <div class="footer-brand">
           <div class="logo" style="margin-bottom:8px;">
+            <?php if (!empty($_footerSettings['site_logo'])): ?>
+            <img src="/<?= escape($_footerSettings['site_logo']) ?>" alt="<?= escape($_footerSettings['site_short_name'] ?? 'TIBST') ?>" class="logo-img">
+            <?php else: ?>
             <div class="logo-icon">T</div>
+            <?php endif; ?>
             <div class="logo-text">
-              <span class="logo-name" style="color:white;">TIBST</span>
-              <span class="logo-full">Thrivus Institute of Biomedical Sciences & Technology</span>
+              <span class="logo-name" style="color:white;"><?= escape($_footerSettings['site_short_name'] ?? 'TIBST') ?></span>
+              <span class="logo-full"><?= escape($_footerSettings['site_name'] ?? 'Thrivus Institute of Biomedical Sciences & Technology') ?></span>
             </div>
           </div>
           <p>Shaping the future of biomedical science through innovative research and world-class postgraduate education. Your career starts with us.</p>
