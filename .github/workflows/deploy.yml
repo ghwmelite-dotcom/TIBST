@@ -10,21 +10,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Deploy via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
-          server-dir: /public_html/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            .github/**
-            docs/**
-            Dockerfile
-            docker-compose.yml
-            docker-entrypoint.sh
-            .dockerignore
-            README.md
-            .env
+          port: 21098
+          local_path: './*'
+          remote_path: '/home/${{ secrets.FTP_USER }}/public_html/'
+          sftp_only: true
+          exclude: '.git*,.github/*,docs/*,Dockerfile,docker-compose.yml,docker-entrypoint.sh,.dockerignore,README.md,.env'
