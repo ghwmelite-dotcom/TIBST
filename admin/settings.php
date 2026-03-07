@@ -99,6 +99,20 @@ $settings = getSettings();
             <input type="url" name="settings[whatsapp]" class="form-input" value="<?= escape($settings['whatsapp'] ?? '') ?>" placeholder="https://wa.me/...">
         </div>
 
+        <h3 class="form-section-title">E-Library (Google Drive)</h3>
+
+        <div class="form-group">
+            <label class="form-label">Google Drive API Key</label>
+            <input type="text" name="settings[gdrive_api_key]" class="form-input" value="<?= escape($settings['gdrive_api_key'] ?? '') ?>" placeholder="AIzaSy...">
+            <span class="form-hint">Create one at console.cloud.google.com &rarr; APIs &rarr; Credentials. Enable the Google Drive API.</span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Google Drive Folder ID</label>
+            <input type="text" name="settings[gdrive_folder_id]" class="form-input" value="<?= escape($settings['gdrive_folder_id'] ?? '') ?>" placeholder="e.g. 11FR2Wo7SDOhI30H59agJK-qBE41cYcx3">
+            <span class="form-hint">The folder ID from the Google Drive share URL. The folder must be shared as "Anyone with the link can view".</span>
+        </div>
+
         <div class="btn-group mt-2">
             <button type="submit" class="btn-admin btn-admin-primary">Save Settings</button>
         </div>

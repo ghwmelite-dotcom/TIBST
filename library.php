@@ -1,230 +1,311 @@
 <?php
-$pageTitle = 'Library - TIBST';
+$pageTitle  = 'E-Library — TIBST';
 $activePage = 'library';
+
+require_once 'includes/auth.php';
+require_once 'includes/functions.php';
+require_once 'includes/library-auth.php';
+require_once 'includes/gdrive.php';
+
+startSession();
+
+// Handle logout
+if (isset($_GET['logout'])) {
+    unset($_SESSION['library_user']);
+    header('Location: library.php');
+    exit;
+}
+
+// Handle login / register
+$authError = '';
+$authTab   = $_POST['auth_tab'] ?? ($_GET['tab'] ?? 'login');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['auth_action'] ?? '';
+
+    if ($action === 'register') {
+        $authTab  = 'register';
+        $email    = trim($_POST['reg_email'] ?? '');
+        $password = $_POST['reg_password'] ?? '';
+        $name     = trim($_POST['reg_name'] ?? '');
+
+        if ($email === '' || $password === '' || $name === '') {
+            $authError = 'All fields are required.';
+        } else {
+            $result = libraryRegister($email, $password, $name);
+            if ($result === true) {
+                libraryLogin($email, $password);
+                header('Location: library.php');
+                exit;
+            } else {
+                $authError = $result;
+            }
+        }
+    } elseif ($action === 'login') {
+        $authTab  = 'login';
+        $email    = trim($_POST['login_email'] ?? '');
+        $password = $_POST['login_password'] ?? '';
+
+        if ($email === '' || $password === '') {
+            $authError = 'Please enter your email and password.';
+        } elseif (!libraryLogin($email, $password)) {
+            $authError = 'Invalid email or password.';
+        } else {
+            header('Location: library.php');
+            exit;
+        }
+    }
+}
+
 require_once 'includes/header.php';
 
-// ── Fetch dynamic content ──────────────────────────────────────────
-$libraryOverview  = getPageBlock('library', 'overview');
-$libraryResources = getPageBlock('library', 'resources');
-$libraryHours     = getPageBlock('library', 'hours');
+// Fetch documents if logged in
+$files      = [];
+$driveError = '';
+if (isLibraryLoggedIn()) {
+    $settings = getSettings();
+    $apiKey   = $settings['gdrive_api_key'] ?? '';
+    $folderId = $settings['gdrive_folder_id'] ?? '';
+
+    if ($apiKey && $folderId) {
+        $files = getGDriveFiles($folderId, $apiKey);
+        if (empty($files)) {
+            $driveError = 'No documents available at this time. Please check back later.';
+        }
+    } else {
+        $driveError = 'The library is being configured. Please check back soon.';
+    }
+}
 ?>
 
-  <!-- PAGE HERO -->
-  <section class="page-hero" style="background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1920&q=80');">
-    <div class="hero-overlay"></div>
-    <div class="container" style="position:relative; z-index:1;">
-      <div class="breadcrumb fade-up">
-        <a href="index.php">Home</a>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        <span>Library</span>
-      </div>
-      <h1 class="fade-up">TIBST Library</h1>
-      <p class="fade-up">Your gateway to knowledge -- explore our extensive collection of biomedical resources, journals, and digital databases.</p>
-    </div>
-  </section>
+<?php if (!isLibraryLoggedIn()): ?>
+<!-- ===== AUTH GATE ===== -->
+<section class="lib-gate">
+  <div class="lib-gate-bg">
+    <div class="lib-gate-shape-1"></div>
+    <div class="lib-gate-shape-2"></div>
+  </div>
+  <div class="container">
+    <div class="lib-gate-grid">
 
-  <!-- LIBRARY OVERVIEW -->
-  <section class="section" style="background: var(--off-white);">
-    <div class="container">
-      <?php if (!empty($libraryOverview)): ?>
-      <div class="fade-up"><?= $libraryOverview ?></div>
-      <?php else: ?>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:48px; align-items:center;">
-        <div class="fade-up">
-          <div class="section-label">About the Library</div>
-          <h2 class="section-title" style="text-align:left;">A Hub for Biomedical Research</h2>
-          <p style="margin-bottom:16px;">The TIBST Library is a modern academic resource centre dedicated to supporting the research and learning needs of our postgraduate students and faculty. Our collection spans the full spectrum of biomedical sciences, with particular strength in gene therapy, human embryology, and translational medicine.</p>
-          <p style="margin-bottom:16px;">With both physical and digital collections, our library provides 24/7 access to thousands of peer-reviewed journals, electronic databases, and specialised reference materials. Our knowledgeable library staff are always available to assist with research queries and literature searches.</p>
-          <p>Whether you are beginning your literature review or deep into your thesis research, the TIBST Library has the resources you need to succeed.</p>
-        </div>
-        <div class="fade-up fade-up-delay-1" style="border-radius:16px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.1);">
-          <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&q=80" alt="TIBST Library interior" style="width:100%; height:400px; object-fit:cover; display:block;">
-        </div>
-      </div>
-      <?php endif; ?>
-    </div>
-  </section>
-
-  <!-- SEARCH CATALOG -->
-  <section class="section" style="background: var(--white);">
-    <div class="container">
-      <div class="section-header fade-up">
-        <div class="section-label">Find Resources</div>
-        <h2 class="section-title">Search the Catalogue</h2>
-        <p class="section-subtitle">Search our entire collection of books, journals, e-resources, and research papers.</p>
-      </div>
-
-      <div class="fade-up" style="max-width:700px; margin:0 auto;">
-        <form action="#" method="GET" style="display:flex; gap:12px; flex-wrap:wrap;">
-          <div style="flex:1; min-width:280px;">
-            <input class="form-input" type="text" name="query" placeholder="Search by title, author, subject, or keyword..." style="height:52px; font-size:16px;">
+      <!-- Info Side -->
+      <div class="lib-gate-info fade-up">
+        <span class="section-label">TIBST E-Library</span>
+        <h1 class="lib-gate-title">Access Our Digital<br><em>Collection</em></h1>
+        <p class="lib-gate-desc">Browse research papers, textbooks, journals, and academic resources from the Thrivus Institute. Sign in with your institutional email to get started.</p>
+        <div class="lib-gate-features">
+          <div class="lib-gate-feat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span>Research Papers & Journals</span>
           </div>
-          <button type="submit" class="btn btn-primary" style="height:52px; padding:0 32px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            Search
-          </button>
+          <div class="lib-gate-feat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Textbooks & Course Materials</span>
+          </div>
+          <div class="lib-gate-feat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>Searchable Digital Archive</span>
+          </div>
+          <div class="lib-gate-feat">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Secure, View-Only Access</span>
+          </div>
+        </div>
+        <p class="lib-gate-note">Access requires a valid <strong>.edu.gov.gh</strong> email address.</p>
+      </div>
+
+      <!-- Auth Card -->
+      <div class="lib-gate-card fade-up fade-up-delay-1">
+        <div class="lib-gate-tabs">
+          <button class="lib-tab <?= $authTab === 'login' ? 'active' : '' ?>" data-tab="login">Sign In</button>
+          <button class="lib-tab <?= $authTab === 'register' ? 'active' : '' ?>" data-tab="register">Register</button>
+        </div>
+
+        <?php if ($authError): ?>
+        <div class="lib-gate-error"><?= escape($authError) ?></div>
+        <?php endif; ?>
+
+        <!-- Login -->
+        <form method="POST" class="lib-gate-form <?= $authTab === 'login' ? 'active' : '' ?>" id="form-login">
+          <input type="hidden" name="auth_action" value="login">
+          <input type="hidden" name="auth_tab" value="login">
+          <div class="lib-fg">
+            <label for="login_email">Email Address</label>
+            <input type="email" id="login_email" name="login_email" placeholder="you@university.edu.gov.gh" value="<?= escape($_POST['login_email'] ?? '') ?>" required>
+          </div>
+          <div class="lib-fg">
+            <label for="login_password">Password</label>
+            <input type="password" id="login_password" name="login_password" placeholder="Enter your password" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; height:48px; border-radius:50px; font-size:15px;">Sign In</button>
+        </form>
+
+        <!-- Register -->
+        <form method="POST" class="lib-gate-form <?= $authTab === 'register' ? 'active' : '' ?>" id="form-register">
+          <input type="hidden" name="auth_action" value="register">
+          <input type="hidden" name="auth_tab" value="register">
+          <div class="lib-fg">
+            <label for="reg_name">Full Name</label>
+            <input type="text" id="reg_name" name="reg_name" placeholder="Your full name" value="<?= escape($_POST['reg_name'] ?? '') ?>" required>
+          </div>
+          <div class="lib-fg">
+            <label for="reg_email">Institutional Email</label>
+            <input type="email" id="reg_email" name="reg_email" placeholder="you@university.edu.gov.gh" value="<?= escape($_POST['reg_email'] ?? '') ?>" required>
+            <small>Must be a .edu.gov.gh email address</small>
+          </div>
+          <div class="lib-fg">
+            <label for="reg_password">Create Password</label>
+            <input type="password" id="reg_password" name="reg_password" placeholder="Minimum 6 characters" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; height:48px; border-radius:50px; font-size:15px;">Create Account</button>
         </form>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DIGITAL RESOURCES -->
-  <section class="section" style="background: var(--off-white);">
-    <div class="container">
-      <div class="section-header fade-up">
-        <div class="section-label">Online Access</div>
-        <h2 class="section-title">Digital Resources</h2>
-        <p class="section-subtitle">Access a wealth of electronic resources to support your academic work and research.</p>
+<?php else: ?>
+<!-- ===== LIBRARY HEADER ===== -->
+<section class="lib-header">
+  <div class="container">
+    <div class="lib-header-row">
+      <div>
+        <h1 class="lib-title">E-Library</h1>
+        <p class="lib-sub">Welcome, <strong><?= escape(getLibraryUser()['name']) ?></strong> &mdash; <?= count($files) ?> document<?= count($files) !== 1 ? 's' : '' ?> available</p>
       </div>
+      <a href="library.php?logout=1" class="btn btn-outline-dark btn-sm">Sign Out</a>
+    </div>
 
-      <div class="features-grid">
-        <div class="feature-card fade-up">
-          <div class="feature-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-          </div>
-          <h3>E-Journals</h3>
-          <p>Access thousands of peer-reviewed biomedical journals from publishers including Elsevier, Springer Nature, Wiley, and Oxford University Press.</p>
-        </div>
-
-        <div class="feature-card fade-up fade-up-delay-1">
-          <div class="feature-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-          </div>
-          <h3>Databases</h3>
-          <p>Search PubMed, Scopus, Web of Science, MEDLINE, and other specialised biomedical databases for comprehensive literature reviews.</p>
-        </div>
-
-        <div class="feature-card fade-up fade-up-delay-2">
-          <div class="feature-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-          </div>
-          <h3>E-Books</h3>
-          <p>Browse our growing collection of electronic textbooks and reference books covering gene therapy, embryology, molecular biology, and more.</p>
-        </div>
-
-        <div class="feature-card fade-up">
-          <div class="feature-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          </div>
-          <h3>Research Papers</h3>
-          <p>Access published research papers from TIBST faculty and students, as well as papers from collaborating institutions worldwide.</p>
-        </div>
-
-        <div class="feature-card fade-up fade-up-delay-1">
-          <div class="feature-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-          </div>
-          <h3>Thesis Repository</h3>
-          <p>Browse completed MPhil and PhD theses from TIBST graduates. A valuable resource for understanding research standards and methodologies.</p>
-        </div>
-
-        <div class="feature-card fade-up fade-up-delay-2">
-          <div class="feature-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-          </div>
-          <h3>Open Access</h3>
-          <p>Discover freely available open-access journals and repositories including PubMed Central, DOAJ, and BioMed Central resources.</p>
-        </div>
+    <!-- Search & Filters -->
+    <div class="lib-toolbar">
+      <div class="lib-search-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="lib-search" class="lib-search" placeholder="Search documents by title...">
+      </div>
+      <div class="lib-filters" id="lib-filters">
+        <button class="lib-filter active" data-filter="all">All</button>
+        <button class="lib-filter" data-filter="pdf">PDF</button>
+        <button class="lib-filter" data-filter="word">Word</button>
+        <button class="lib-filter" data-filter="excel">Excel</button>
+        <button class="lib-filter" data-filter="ppt">Slides</button>
+        <button class="lib-filter" data-filter="other">Other</button>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- LIBRARY HOURS -->
-  <section class="section" style="background: var(--white);">
-    <div class="container">
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:48px; max-width:900px; margin:0 auto;">
-
-        <!-- Hours -->
-        <div class="fade-up">
-          <div class="section-label">Plan Your Visit</div>
-          <h2 style="margin-bottom:24px;">Library Hours</h2>
-
-          <div class="feature-card">
-            <div style="display:flex; flex-direction:column; gap:16px;">
-              <div style="display:flex; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid #eee;">
-                <span style="font-weight:600;">Monday - Friday</span>
-                <span style="color:#4E9B17; font-weight:600;">8:00 AM - 8:00 PM</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid #eee;">
-                <span style="font-weight:600;">Saturday</span>
-                <span style="color:#4E9B17; font-weight:600;">9:00 AM - 5:00 PM</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid #eee;">
-                <span style="font-weight:600;">Sunday</span>
-                <span style="color:#4E9B17; font-weight:600;">12:00 PM - 5:00 PM</span>
-              </div>
-              <div style="display:flex; justify-content:space-between;">
-                <span style="font-weight:600;">Public Holidays</span>
-                <span style="color:#666;">Closed</span>
-              </div>
-            </div>
-            <p style="margin-top:16px; font-size:14px; color:#666;">* Extended hours during examination periods. Check announcements for updates.</p>
-          </div>
-        </div>
-
-        <!-- Borrowing Policies -->
-        <div class="fade-up fade-up-delay-1">
-          <div class="section-label">Regulations</div>
-          <h2 style="margin-bottom:24px;">Borrowing Policies</h2>
-
-          <div class="feature-card">
-            <div style="display:flex; flex-direction:column; gap:16px;">
-              <div style="padding-bottom:16px; border-bottom:1px solid #eee;">
-                <h4 style="margin-bottom:4px;">Students</h4>
-                <p style="font-size:14px; color:#666;">Up to 5 books for 14 days. Renewable once if not reserved by another user.</p>
-              </div>
-              <div style="padding-bottom:16px; border-bottom:1px solid #eee;">
-                <h4 style="margin-bottom:4px;">Faculty & Staff</h4>
-                <p style="font-size:14px; color:#666;">Up to 10 books for 30 days. Renewable twice if not reserved by another user.</p>
-              </div>
-              <div style="padding-bottom:16px; border-bottom:1px solid #eee;">
-                <h4 style="margin-bottom:4px;">Reference Materials</h4>
-                <p style="font-size:14px; color:#666;">For in-library use only. Cannot be checked out but may be photocopied.</p>
-              </div>
-              <div>
-                <h4 style="margin-bottom:4px;">Overdue Fines</h4>
-                <p style="font-size:14px; color:#666;">GHS 2.00 per day for overdue items. Borrowing privileges suspended after 3 overdue items.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
+<!-- ===== DOCUMENT GRID ===== -->
+<section class="lib-docs">
+  <div class="container">
+    <?php if ($driveError): ?>
+    <div class="lib-empty">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <h3><?= escape($driveError) ?></h3>
     </div>
-  </section>
 
-  <!-- CONTACT LIBRARIAN -->
-  <section class="section" style="background: var(--off-white);">
-    <div class="container">
-      <div class="section-header fade-up">
-        <div class="section-label">Need Help?</div>
-        <h2 class="section-title">Contact the Librarian</h2>
-        <p class="section-subtitle">Our library staff are here to help you find the resources you need for your research and studies.</p>
-      </div>
-
-      <div style="max-width:600px; margin:0 auto;">
-        <div class="feature-card fade-up" style="text-align:center;">
-          <div style="width:72px; height:72px; background:#4E9B17; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          </div>
-          <h3 style="margin-bottom:8px;">Library Information Desk</h3>
-          <p style="color:#666; margin-bottom:20px;">For enquiries about library services, resource access, research support, or interlibrary loans.</p>
-          <div style="display:flex; flex-direction:column; gap:12px; align-items:center;">
-            <a href="mailto:library@thrivusinstitute.edu.gh" style="display:flex; align-items:center; gap:8px; color:#4E9B17;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-              library@thrivusinstitute.edu.gh
-            </a>
-            <a href="tel:+233302957663" style="display:flex; align-items:center; gap:8px; color:#4E9B17;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-              +233 302 957 663 (ext. Library)
-            </a>
-          </div>
-          <div style="margin-top:24px;">
-            <a href="contact.php" class="btn btn-outline-dark">Visit Contact Page <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+    <?php else: ?>
+    <div class="lib-count" id="lib-count"><?= count($files) ?> document<?= count($files) !== 1 ? 's' : '' ?></div>
+    <div class="lib-grid" id="lib-grid">
+      <?php foreach ($files as $i => $file):
+        $fileType   = getFileTypeLabel($file['mimeType'] ?? '');
+        $badgeClass = getFileTypeBadgeClass($file['mimeType'] ?? '');
+        $fileSize   = isset($file['size']) ? formatFileSize((int) $file['size']) : '';
+        $modified   = isset($file['modifiedTime']) ? date('M j, Y', strtotime($file['modifiedTime'])) : '';
+        $previewUrl = getGDrivePreviewUrl($file['id'], $file['mimeType'] ?? '');
+        $fileName   = pathinfo($file['name'], PATHINFO_FILENAME);
+      ?>
+      <a href="library-viewer.php?id=<?= urlencode($file['id']) ?>&type=<?= urlencode($file['mimeType'] ?? '') ?>&name=<?= urlencode($fileName) ?>"
+         class="lib-card fade-up<?= $i < 3 ? ' fade-up-delay-' . $i : '' ?>"
+         data-type="<?= $badgeClass ?>"
+         data-name="<?= escape(strtolower($file['name'])) ?>">
+        <div class="lib-card-icon lib-icon-<?= $badgeClass ?>">
+          <?php if ($badgeClass === 'pdf'): ?>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <?php elseif ($badgeClass === 'word'): ?>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <?php elseif ($badgeClass === 'excel'): ?>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+          <?php elseif ($badgeClass === 'ppt'): ?>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><polyline points="8 20 16 20"/><line x1="12" y1="18" x2="12" y2="20"/></svg>
+          <?php else: ?>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          <?php endif; ?>
+        </div>
+        <div class="lib-card-body">
+          <h3 class="lib-card-title"><?= escape($fileName) ?></h3>
+          <div class="lib-card-meta">
+            <span class="lib-badge lib-badge-<?= $badgeClass ?>"><?= $fileType ?></span>
+            <?php if ($fileSize): ?><span><?= $fileSize ?></span><?php endif; ?>
+            <?php if ($modified): ?><span><?= $modified ?></span><?php endif; ?>
           </div>
         </div>
-      </div>
+        <span class="lib-card-action">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Read
+        </span>
+      </a>
+      <?php endforeach; ?>
     </div>
-  </section>
+
+    <div class="lib-no-results" id="lib-no-results" style="display:none;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <h3>No documents match your search</h3>
+      <p>Try adjusting your search terms or filters.</p>
+    </div>
+    <?php endif; ?>
+  </div>
+</section>
+<?php endif; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Auth tab switching
+  document.querySelectorAll('.lib-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.lib-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.lib-gate-form').forEach(f => f.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('form-' + tab.dataset.tab)?.classList.add('active');
+    });
+  });
+
+  // Search & filter
+  const search    = document.getElementById('lib-search');
+  const grid      = document.getElementById('lib-grid');
+  const countEl   = document.getElementById('lib-count');
+  const noResults = document.getElementById('lib-no-results');
+  if (!search || !grid) return;
+
+  let activeFilter = 'all';
+
+  function filterDocs() {
+    const q     = search.value.toLowerCase().trim();
+    const cards = grid.querySelectorAll('.lib-card');
+    let vis     = 0;
+
+    cards.forEach(card => {
+      const name = card.dataset.name || '';
+      const type = card.dataset.type || '';
+      const ok   = (!q || name.includes(q)) && (activeFilter === 'all' || type === activeFilter);
+      card.style.display = ok ? '' : 'none';
+      if (ok) vis++;
+    });
+
+    if (countEl) countEl.textContent = vis + ' document' + (vis !== 1 ? 's' : '') + (q ? ' found' : '');
+    if (noResults) noResults.style.display = vis === 0 ? '' : 'none';
+  }
+
+  search.addEventListener('input', filterDocs);
+
+  document.querySelectorAll('.lib-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lib-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      filterDocs();
+    });
+  });
+});
+</script>
 
 <?php require_once 'includes/footer.php'; ?>

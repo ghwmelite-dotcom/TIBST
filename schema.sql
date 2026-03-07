@@ -126,7 +126,9 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 ('instagram', 'https://www.instagram.com/thrivusinstitute'),
 ('linkedin', 'https://www.linkedin.com/company/thrivusinstitute'),
 ('youtube', 'https://www.youtube.com/@thrivusinstitute'),
-('whatsapp', 'https://wa.me/233277715058');
+('whatsapp', 'https://wa.me/233277715058'),
+('gdrive_api_key', ''),
+('gdrive_folder_id', '11FR2Wo7SDOhI30H59agJK-qBE41cYcx3');
 
 -- =========================================================
 -- Seed Data: Hero Slide
@@ -216,4 +218,16 @@ CREATE TABLE IF NOT EXISTS applications (
     admin_notes TEXT,
     agreed_terms TINYINT(1) DEFAULT 0,
     submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+-- Library Users (E-Library access control)
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS library_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(150) NOT NULL,
+    is_approved TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
