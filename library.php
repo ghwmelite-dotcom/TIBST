@@ -83,84 +83,80 @@ $categories = array_keys($library);
 
 <?php if (!isLibraryLoggedIn()): ?>
 <!-- ===== AUTH GATE ===== -->
-<section class="lib-gate">
-  <div class="lib-gate-bg">
-    <div class="lib-gate-shape-1"></div>
-    <div class="lib-gate-shape-2"></div>
-  </div>
+<section class="elibrary-gate">
   <div class="container">
-    <div class="lib-gate-grid">
+    <div class="elibrary-gate__grid">
 
       <!-- Info Side -->
-      <div class="lib-gate-info fade-up">
+      <div class="elibrary-gate__info fade-up">
         <span class="section-label">TIBST E-Library</span>
-        <h1 class="lib-gate-title">Access Our Digital<br><em>Collection</em></h1>
-        <p class="lib-gate-desc">Browse research papers, textbooks, journals, and academic resources from the Thrivus Institute. Sign in with your institutional email to get started.</p>
-        <div class="lib-gate-features">
-          <div class="lib-gate-feat">
+        <h1 class="elibrary-gate__title">Access Our Digital<br><em>Collection</em></h1>
+        <p class="elibrary-gate__desc">Browse research papers, textbooks, journals, and academic resources from the Thrivus Institute. Sign in with your institutional email to get started.</p>
+        <ul class="elibrary-gate__perks">
+          <li>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             <span>Research Papers & Journals</span>
-          </div>
-          <div class="lib-gate-feat">
+          </li>
+          <li>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span>Textbooks & Course Materials</span>
-          </div>
-          <div class="lib-gate-feat">
+          </li>
+          <li>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <span>Searchable Digital Archive</span>
-          </div>
-          <div class="lib-gate-feat">
+          </li>
+          <li>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <span>Secure, View-Only Access</span>
-          </div>
-        </div>
-        <p class="lib-gate-note">Access requires a valid <strong>.edu.gov.gh</strong> email address.</p>
+          </li>
+        </ul>
+        <div class="elibrary-gate__notice">Access requires a valid <strong>.edu.gov.gh</strong> email address.</div>
       </div>
 
       <!-- Auth Card -->
-      <div class="lib-gate-card fade-up fade-up-delay-1">
-        <div class="lib-gate-tabs">
-          <button class="lib-tab <?= $authTab === 'login' ? 'active' : '' ?>" data-tab="login">Sign In</button>
-          <button class="lib-tab <?= $authTab === 'register' ? 'active' : '' ?>" data-tab="register">Register</button>
+      <div class="elibrary-gate__card fade-up fade-up-delay-1">
+        <div class="elibrary-tabs">
+          <button class="elibrary-tabs__btn <?= $authTab === 'login' ? 'is-active' : '' ?>" data-tab="login" type="button">Sign In</button>
+          <button class="elibrary-tabs__btn <?= $authTab === 'register' ? 'is-active' : '' ?>" data-tab="register" type="button">Register</button>
         </div>
 
         <?php if ($authError): ?>
-        <div class="lib-gate-error"><?= escape($authError) ?></div>
+        <div class="elibrary-gate__error"><?= escape($authError) ?></div>
         <?php endif; ?>
 
         <!-- Login -->
-        <form method="POST" class="lib-gate-form <?= $authTab === 'login' ? 'active' : '' ?>" id="form-login">
+        <form method="POST" class="elibrary-form <?= $authTab === 'login' ? 'is-active' : '' ?>" id="form-login">
           <input type="hidden" name="auth_action" value="login">
           <input type="hidden" name="auth_tab" value="login">
-          <div class="lib-fg">
+          <div class="elibrary-field">
             <label for="login_email">Email Address</label>
             <input type="email" id="login_email" name="login_email" placeholder="you@university.edu.gov.gh" value="<?= escape($_POST['login_email'] ?? '') ?>" required>
           </div>
-          <div class="lib-fg">
+          <div class="elibrary-field">
             <label for="login_password">Password</label>
             <input type="password" id="login_password" name="login_password" placeholder="Enter your password" required>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%; height:48px; border-radius:50px; font-size:15px;">Sign In</button>
+          <button type="submit" class="elibrary-submit">Sign In</button>
         </form>
 
         <!-- Register -->
-        <form method="POST" class="lib-gate-form <?= $authTab === 'register' ? 'active' : '' ?>" id="form-register">
+        <form method="POST" class="elibrary-form <?= $authTab === 'register' ? 'is-active' : '' ?>" id="form-register">
           <input type="hidden" name="auth_action" value="register">
           <input type="hidden" name="auth_tab" value="register">
-          <div class="lib-fg">
+          <div class="elibrary-field">
             <label for="reg_name">Full Name</label>
             <input type="text" id="reg_name" name="reg_name" placeholder="Your full name" value="<?= escape($_POST['reg_name'] ?? '') ?>" required>
           </div>
-          <div class="lib-fg">
+          <div class="elibrary-field">
             <label for="reg_email">Institutional Email</label>
             <input type="email" id="reg_email" name="reg_email" placeholder="you@university.edu.gov.gh" value="<?= escape($_POST['reg_email'] ?? '') ?>" required>
-            <small>Must be a .edu.gov.gh email address</small>
+            <small class="elibrary-field__hint">Must be a .edu.gov.gh email address</small>
           </div>
-          <div class="lib-fg">
+          <div class="elibrary-field">
             <label for="reg_password">Create Password</label>
             <input type="password" id="reg_password" name="reg_password" placeholder="Minimum 6 characters" required minlength="6">
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%; height:48px; border-radius:50px; font-size:15px;">Create Account</button>
+          <button type="submit" class="elibrary-submit">Create Account</button>
         </form>
       </div>
     </div>
@@ -276,12 +272,12 @@ $categories = array_keys($library);
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   // Auth tab switching
-  document.querySelectorAll('.lib-tab').forEach(tab => {
+  document.querySelectorAll('.elibrary-tabs__btn').forEach(tab => {
     tab.addEventListener('click', () => {
-      document.querySelectorAll('.lib-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.lib-gate-form').forEach(f => f.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('form-' + tab.dataset.tab)?.classList.add('active');
+      document.querySelectorAll('.elibrary-tabs__btn').forEach(t => t.classList.remove('is-active'));
+      document.querySelectorAll('.elibrary-form').forEach(f => f.classList.remove('is-active'));
+      tab.classList.add('is-active');
+      document.getElementById('form-' + tab.dataset.tab)?.classList.add('is-active');
     });
   });
 
