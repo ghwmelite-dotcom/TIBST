@@ -5,7 +5,13 @@
 
 $adminActivePage = 'pages';
 
-require_once __DIR__ . '/includes/admin-header.php';
+// Load dependencies BEFORE any HTML output so redirects work
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
+
+startSession();
+requireAuth();
 
 $pageBlocks = [
     'about'        => ['mission' => 'Mission & Vision', 'vision' => 'Our Vision', 'history' => 'Our History'],
@@ -27,7 +33,7 @@ $adminPageTitle = 'Edit: ' . ucfirst(str_replace('-', ' ', $page));
 $blocks         = $pageBlocks[$page];
 $pdo            = getDB();
 
-// ─── POST Handler ────────────────────────────────────────────────────
+// ─── POST Handler (must run before admin-header outputs HTML) ────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrf();
 
@@ -50,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: /admin/page-edit.php?page=' . urlencode($page));
     exit;
 }
+
+require_once __DIR__ . '/includes/admin-header.php';
 
 // Load existing content for each block
 $blockContents = [];

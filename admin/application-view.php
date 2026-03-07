@@ -6,7 +6,13 @@
 $adminPageTitle  = 'View Application';
 $adminActivePage = 'applications';
 
-require_once __DIR__ . '/includes/admin-header.php';
+// Load dependencies BEFORE any HTML output so redirects work
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
+
+startSession();
+requireAuth();
 
 $pdo = getDB();
 $id = (int) ($_GET['id'] ?? 0);
@@ -17,7 +23,7 @@ if (!$id) {
     exit;
 }
 
-// Handle status update
+// Handle status update (must run before admin-header outputs HTML)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && validateCsrf()) {
     $newStatus = $_POST['status'] ?? '';
     $adminNotes = trim($_POST['admin_notes'] ?? '');
@@ -40,6 +46,8 @@ if (!$app) {
     header('Location: /admin/applications.php');
     exit;
 }
+
+require_once __DIR__ . '/includes/admin-header.php';
 
 $badgeColors = [
     'pending'  => 'background:#fef3c7; color:#92400e;',

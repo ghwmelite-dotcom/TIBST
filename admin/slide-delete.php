@@ -4,7 +4,12 @@
  * Requires POST with CSRF token.
  */
 
-require_once __DIR__ . '/includes/admin-header.php';
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
+
+startSession();
+requireAuth();
 
 // Only accept POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

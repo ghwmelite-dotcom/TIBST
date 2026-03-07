@@ -6,7 +6,13 @@
 $adminPageTitle  = 'My Profile';
 $adminActivePage = 'profile';
 
-require_once __DIR__ . '/includes/admin-header.php';
+// Load dependencies BEFORE any HTML output so redirects work
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
+
+startSession();
+requireAuth();
 
 $pdo           = getDB();
 $currentUserId = currentUser()['id'];
@@ -24,7 +30,7 @@ if (!$profile) {
 
 $errors = [];
 
-// ─── POST Handler ────────────────────────────────────────────────────
+// ─── POST Handler (must run before admin-header outputs HTML) ────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrf();
 
@@ -94,6 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $profile['name']  = $name;
     $profile['email'] = $email;
 }
+
+require_once __DIR__ . '/includes/admin-header.php';
 ?>
 
 <div class="content-header">

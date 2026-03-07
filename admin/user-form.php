@@ -5,8 +5,13 @@
 
 $adminActivePage = 'users';
 
-require_once __DIR__ . '/includes/admin-header.php';
+// Load dependencies BEFORE any HTML output so redirects work
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
 
+startSession();
+requireAuth();
 requireAdmin();
 
 $pdo     = getDB();
@@ -37,7 +42,7 @@ if (isset($_GET['id'])) {
 $adminPageTitle = $editing ? 'Edit User' : 'Add User';
 $errors = [];
 
-// ─── POST Handler ────────────────────────────────────────────────────
+// ─── POST Handler (must run before admin-header outputs HTML) ────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrf();
 
@@ -117,6 +122,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
+
+require_once __DIR__ . '/includes/admin-header.php';
 ?>
 
 <div class="content-header">

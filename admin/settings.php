@@ -6,11 +6,17 @@
 $adminPageTitle  = 'Settings';
 $adminActivePage = 'settings';
 
-require_once __DIR__ . '/includes/admin-header.php';
+// Load dependencies BEFORE any HTML output so redirects work
+require_once __DIR__ . '/../includes/auth.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/functions.php';
+
+startSession();
+requireAuth();
 
 $pdo = getDB();
 
-// ─── POST Handler ────────────────────────────────────────────────────
+// ─── POST Handler (must run before admin-header outputs HTML) ────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrf();
 
@@ -44,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: /admin/settings.php');
     exit;
 }
+
+// Now safe to output HTML
+require_once __DIR__ . '/includes/admin-header.php';
 
 $settings = getSettings();
 ?>
