@@ -23,7 +23,7 @@ $_footerYoutube   = escape($_footerSettings['youtube']   ?? 'https://youtube.com
         <div class="footer-brand">
           <div class="logo" style="margin-bottom:8px;">
             <?php if (!empty($_footerSettings['site_logo'])): ?>
-            <img src="/<?= escape($_footerSettings['site_logo']) ?>" alt="<?= escape($_footerSettings['site_short_name'] ?? 'TIBST') ?>" class="logo-img">
+            <img src="<?= escape($_footerSettings['site_logo']) ?>" alt="<?= escape($_footerSettings['site_short_name'] ?? 'TIBST') ?>" class="logo-img">
             <?php else: ?>
             <div class="logo-icon">T</div>
             <?php endif; ?>

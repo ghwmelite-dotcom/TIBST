@@ -29,7 +29,7 @@ $youtube   = escape($settings['youtube']   ?? 'https://youtube.com');
   <meta name="description" content="Thrivus Institute of Biomedical Sciences & Technology - Your career starts with us. Offering MPhil and PhD programmes in Gene Therapy and Human Embryology.">
   <link rel="stylesheet" href="css/styles.css">
 <?php if (!empty($settings['site_favicon'])): ?>
-  <link rel="icon" href="/<?= escape($settings['site_favicon']) ?>">
+  <link rel="icon" href="<?= escape($settings['site_favicon']) ?>">
 <?php else: ?>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234E9B17' rx='20' width='100' height='100'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='serif' font-weight='bold'>T</text></svg>">
 <?php endif; ?>
@@ -78,7 +78,7 @@ $youtube   = escape($settings['youtube']   ?? 'https://youtube.com');
     <div class="nav-container">
       <a href="index.php" class="logo">
         <?php if (!empty($settings['site_logo'])): ?>
-        <img src="/<?= escape($settings['site_logo']) ?>" alt="<?= escape($settings['site_short_name'] ?? 'TIBST') ?>" class="logo-img">
+        <img src="<?= escape($settings['site_logo']) ?>" alt="<?= escape($settings['site_short_name'] ?? 'TIBST') ?>" class="logo-img">
         <?php else: ?>
         <div class="logo-icon">T</div>
         <?php endif; ?>

@@ -72,7 +72,7 @@ $settings = getSettings();
                 <label class="form-label">Site Logo</label>
                 <?php if (!empty($settings['site_logo'])): ?>
                 <div style="margin-bottom: 10px;">
-                    <img src="/<?= escape($settings['site_logo']) ?>" alt="Current logo" style="max-height: 60px; border-radius: 8px; border: 1px solid #E2E0D8; padding: 6px; background: #fff;">
+                    <img src="<?= escape($settings['site_logo']) ?>" alt="Current logo" style="max-height: 60px; border-radius: 8px; border: 1px solid #E2E0D8; padding: 6px; background: #fff;">
                 </div>
                 <?php endif; ?>
                 <input type="file" name="site_logo" accept="image/*" class="form-input" style="padding: 8px;">
@@ -82,7 +82,7 @@ $settings = getSettings();
                 <label class="form-label">Favicon</label>
                 <?php if (!empty($settings['site_favicon'])): ?>
                 <div style="margin-bottom: 10px;">
-                    <img src="/<?= escape($settings['site_favicon']) ?>" alt="Current favicon" style="max-height: 40px; border-radius: 6px; border: 1px solid #E2E0D8; padding: 4px; background: #fff;">
+                    <img src="<?= escape($settings['site_favicon']) ?>" alt="Current favicon" style="max-height: 40px; border-radius: 6px; border: 1px solid #E2E0D8; padding: 4px; background: #fff;">
                 </div>
                 <?php endif; ?>
                 <input type="file" name="site_favicon" accept="image/*,.ico" class="form-input" style="padding: 8px;">
