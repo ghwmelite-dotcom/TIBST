@@ -81,11 +81,11 @@ $youtube   = escape($settings['youtube']   ?? 'https://youtube.com');
         <img src="<?= escape($settings['site_logo']) ?>" alt="<?= escape($settings['site_short_name'] ?? 'TIBST') ?>" class="logo-img">
         <?php else: ?>
         <div class="logo-icon">T</div>
-        <?php endif; ?>
         <div class="logo-text">
           <span class="logo-name"><?= escape($settings['site_short_name'] ?? 'TIBST') ?></span>
           <span class="logo-full"><?= escape($settings['site_name'] ?? 'Thrivus Institute of Biomedical Sciences & Technology') ?></span>
         </div>
+        <?php endif; ?>
       </a>
 
       <nav>
