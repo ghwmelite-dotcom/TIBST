@@ -296,6 +296,22 @@ $categories = array_keys($library);
 </div>
 <?php endif; ?>
 
+<?php if (isLibraryLoggedIn() && !empty($library)): ?>
+<script>
+window.LIBRARY_DOCS = <?= json_encode(array_map(function($cat, $files) {
+    return [
+        'category' => $cat,
+        'files' => array_map(function($f) {
+            return [
+                'name' => pathinfo($f['name'], PATHINFO_FILENAME),
+                'type' => getFileTypeLabel($f['mimeType'] ?? ''),
+            ];
+        }, $files)
+    ];
+}, array_keys($library), array_values($library)), JSON_HEX_TAG) ?>;
+</script>
+<?php endif; ?>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   // Auth tab switching

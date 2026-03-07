@@ -50,6 +50,68 @@ Key facts:
 
 Answer questions helpfully and concisely. If you don't know something specific, direct them to contact the university.`;
 
+// ─── Library-specific config (activated when window.LIBRARY_DOCS exists) ───
+function buildLibraryCatalog() {
+  if (!window.LIBRARY_DOCS) return null;
+  const docs = window.LIBRARY_DOCS;
+  let catalog = '';
+  let totalFiles = 0;
+  const catNames = [];
+  docs.forEach(cat => {
+    catNames.push(cat.category);
+    catalog += `\n[${cat.category}]\n`;
+    cat.files.forEach(f => {
+      catalog += `- ${f.name} (${f.type})\n`;
+      totalFiles++;
+    });
+  });
+  return { catalog, totalFiles, catNames };
+}
+
+function getLibraryFAQ(info) {
+  return [
+    {
+      question: "What documents are available?",
+      answer: `The library currently has <strong>${info.totalFiles} document${info.totalFiles !== 1 ? 's' : ''}</strong> across <strong>${info.catNames.length} categor${info.catNames.length !== 1 ? 'ies' : 'y'}</strong>: ${info.catNames.map(c => '<strong>' + c + '</strong>').join(', ')}. Use the search bar or category filters above to browse.`
+    },
+    {
+      question: "How do I view a document?",
+      answer: 'Click on any document card to open it in a preview window right here on this page. Documents are view-only to protect intellectual property.'
+    },
+    {
+      question: "Can I download documents?",
+      answer: 'Documents in the TIBST E-Library are <strong>view-only</strong>. Downloading is not permitted in order to protect copyright and intellectual property rights.'
+    },
+    {
+      question: "How do I search for a document?",
+      answer: 'Use the <strong>search bar</strong> at the top of the library to search by document title. You can also use the <strong>category filter buttons</strong> to narrow results by category.'
+    },
+    {
+      question: "What file types are available?",
+      answer: 'The library contains various document formats including PDFs, Word documents, PowerPoint presentations, Excel spreadsheets, and Google Docs. Each document shows its type as a badge on the card.'
+    },
+    {
+      question: "Who can access the library?",
+      answer: 'The TIBST E-Library is available to users with a valid <strong>.edu.gov.gh</strong> institutional email address, plus approved exception accounts.'
+    }
+  ];
+}
+
+function getLibraryAIContext(info) {
+  return `You are a helpful library assistant for the TIBST (Thrivus Institute of Biomedical Sciences & Technology) E-Library.
+
+Your role is to help users find and learn about documents available in the library. You should ONLY answer questions about the library and its documents. If asked about anything unrelated to the library documents, politely redirect the user to focus on library resources.
+
+The library contains ${info.totalFiles} documents across ${info.catNames.length} categories.
+
+Here is the complete catalog of available documents:
+${info.catalog}
+
+When users ask about a topic, suggest relevant documents from the catalog above. Be specific — mention exact document titles. If no documents match their query, let them know and suggest they try different search terms using the search bar.
+
+Documents are view-only (no downloads). Users can click any document card to preview it.`;
+}
+
 class TIBSTChatbot {
   constructor() {
     this.isOpen = false;
@@ -57,13 +119,21 @@ class TIBSTChatbot {
     this.messages = [];
     this.apiKey = null;
     this.apiProvider = 'openai'; // 'openai' or 'anthropic'
+    this.libraryInfo = buildLibraryCatalog();
+    this.isLibraryMode = !!this.libraryInfo;
+    this.activeFAQ = this.isLibraryMode ? getLibraryFAQ(this.libraryInfo) : CHATBOT_FAQ;
+    this.activeContext = this.isLibraryMode ? getLibraryAIContext(this.libraryInfo) : UNIVERSITY_CONTEXT;
     this.init();
   }
 
   init() {
     this.createWidget();
     this.bindEvents();
-    this.addBotMessage("Hello! Welcome to Thrivus Institute of Biomedical Sciences & Technology. How can I help you today?");
+    if (this.isLibraryMode) {
+      this.addBotMessage("Hello! I'm the TIBST Library Assistant. I can help you find documents, explore categories, and navigate the library. What are you looking for?");
+    } else {
+      this.addBotMessage("Hello! Welcome to Thrivus Institute of Biomedical Sciences & Technology. How can I help you today?");
+    }
   }
 
   createWidget() {
@@ -84,8 +154,8 @@ class TIBSTChatbot {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         </div>
         <div class="chatbot-header-text">
-          <h4>TIBST Assistant</h4>
-          <span>We're here to help</span>
+          <h4>${this.isLibraryMode ? 'Library Assistant' : 'TIBST Assistant'}</h4>
+          <span>${this.isLibraryMode ? 'Find documents & resources' : "We're here to help"}</span>
         </div>
       </div>
       <div class="chatbot-messages" id="chatbot-messages"></div>
@@ -164,9 +234,16 @@ class TIBSTChatbot {
       input.placeholder = 'Or type your question...';
     } else if (mode === 'ai') {
       faqContainer.innerHTML = '';
-      input.placeholder = 'Ask me anything about TIBST...';
-      if (!this.messages.some(m => m.text.includes('AI Assistant'))) {
-        this.addBotMessage("You're now chatting with our AI Assistant. Ask me anything about TIBST's programs, admissions, research, and more!");
+      if (this.isLibraryMode) {
+        input.placeholder = 'Ask about documents, topics, categories...';
+        if (!this.messages.some(m => m.text.includes('AI Assistant'))) {
+          this.addBotMessage("You're now chatting with the AI Library Assistant. Ask me about any topic and I'll find relevant documents for you!");
+        }
+      } else {
+        input.placeholder = 'Ask me anything about TIBST...';
+        if (!this.messages.some(m => m.text.includes('AI Assistant'))) {
+          this.addBotMessage("You're now chatting with our AI Assistant. Ask me anything about TIBST's programs, admissions, research, and more!");
+        }
       }
     } else if (mode === 'live') {
       faqContainer.innerHTML = `
@@ -185,15 +262,16 @@ class TIBSTChatbot {
 
   showFAQButtons() {
     const container = document.getElementById('chat-faq-buttons');
-    container.innerHTML = CHATBOT_FAQ.map((faq, i) =>
-      `<button class="faq-btn" data-faq="${i}">${faq.question}</button>`
+    const faq = this.activeFAQ;
+    container.innerHTML = faq.map((f, i) =>
+      `<button class="faq-btn" data-faq="${i}">${f.question}</button>`
     ).join('');
 
     container.querySelectorAll('.faq-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const index = parseInt(btn.getAttribute('data-faq'));
-        this.addUserMessage(CHATBOT_FAQ[index].question);
-        this.addBotMessage(CHATBOT_FAQ[index].answer);
+        this.addUserMessage(faq[index].question);
+        this.addBotMessage(faq[index].answer);
       });
     });
   }
@@ -216,14 +294,37 @@ class TIBSTChatbot {
   handleFAQSearch(message) {
     const lower = message.toLowerCase();
 
+    // In library mode, also search document names
+    if (this.isLibraryMode) {
+      const matches = [];
+      window.LIBRARY_DOCS.forEach(cat => {
+        cat.files.forEach(f => {
+          if (f.name.toLowerCase().includes(lower) || lower.split(' ').some(w => w.length > 2 && f.name.toLowerCase().includes(w))) {
+            matches.push({ name: f.name, type: f.type, category: cat.category });
+          }
+        });
+      });
+
+      if (matches.length > 0) {
+        const list = matches.slice(0, 8).map(m =>
+          `&bull; <strong>${m.name}</strong> (${m.type}) — in <em>${m.category}</em>`
+        ).join('<br>');
+        this.addBotMessage(`I found ${matches.length} matching document${matches.length !== 1 ? 's' : ''}:<br><br>${list}${matches.length > 8 ? '<br><br>...and more. Try the search bar above to see all results.' : ''}<br><br>Click on any document card above to preview it.`);
+        return;
+      }
+    }
+
     // Try to match FAQ
-    const match = CHATBOT_FAQ.find(faq => {
-      const keywords = faq.question.toLowerCase().split(' ');
+    const faq = this.activeFAQ;
+    const match = faq.find(f => {
+      const keywords = f.question.toLowerCase().split(' ');
       return keywords.some(kw => kw.length > 3 && lower.includes(kw));
     });
 
     if (match) {
       this.addBotMessage(match.answer);
+    } else if (this.isLibraryMode) {
+      this.addBotMessage('I couldn\'t find any documents matching that. Try different keywords, or use the <strong>search bar</strong> and <strong>category filters</strong> above to browse. You can also switch to <strong>AI Assistant</strong> mode for smarter search.');
     } else {
       this.addBotMessage('I\'m not sure about that. You can try our <strong>AI Assistant</strong> mode for more detailed answers, or <strong>Talk to a Person</strong> to chat with our staff on WhatsApp.');
     }
@@ -236,10 +337,46 @@ class TIBSTChatbot {
     // Check for API key
     if (!this.apiKey) {
       this.removeTypingIndicator();
-      // Fallback: use FAQ matching + generic helpful response
       const lower = message.toLowerCase();
 
-      // Extended keyword matching
+      // Library mode: search documents by keyword
+      if (this.isLibraryMode) {
+        const matches = [];
+        window.LIBRARY_DOCS.forEach(cat => {
+          cat.files.forEach(f => {
+            const fname = f.name.toLowerCase();
+            if (lower.split(' ').some(w => w.length > 2 && fname.includes(w))) {
+              matches.push({ name: f.name, type: f.type, category: cat.category });
+            }
+          });
+        });
+
+        if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+          this.addBotMessage('Hello! I can help you find documents in the library. Try asking about a topic, or ask me what documents or categories are available.');
+        } else if (lower.includes('categor') || lower.includes('all') && lower.includes('document') || lower.includes('everything') || lower.includes('what do you have')) {
+          const info = this.libraryInfo;
+          let response = `The library has <strong>${info.totalFiles} documents</strong> in these categories:<br><br>`;
+          window.LIBRARY_DOCS.forEach(cat => {
+            response += `&bull; <strong>${cat.category}</strong> — ${cat.files.length} file${cat.files.length !== 1 ? 's' : ''}<br>`;
+          });
+          response += '<br>Use the category filters above or ask me about a specific topic!';
+          this.addBotMessage(response);
+        } else if (matches.length > 0) {
+          const list = matches.slice(0, 8).map(m =>
+            `&bull; <strong>${m.name}</strong> (${m.type}) — in <em>${m.category}</em>`
+          ).join('<br>');
+          this.addBotMessage(`I found ${matches.length} document${matches.length !== 1 ? 's' : ''} related to your query:<br><br>${list}${matches.length > 8 ? '<br><br>...and more.' : ''}<br><br>Click on the document cards above to preview them.`);
+        } else if (lower.includes('download')) {
+          this.addBotMessage('Documents in the TIBST E-Library are <strong>view-only</strong>. Downloading is not permitted to protect copyright and intellectual property.');
+        } else if (lower.includes('how') && (lower.includes('view') || lower.includes('read') || lower.includes('open'))) {
+          this.addBotMessage('Simply click on any document card above to open it in a preview window. You can search by title using the search bar, or filter by category.');
+        } else {
+          this.addBotMessage('I couldn\'t find any documents matching "<strong>' + message + '</strong>". Try different keywords, or ask me what categories are available. You can also use the search bar and filters above.');
+        }
+        return;
+      }
+
+      // General site mode: keyword matching
       if (lower.includes('apply') || lower.includes('admission') || lower.includes('enroll')) {
         this.addBotMessage('To apply to TIBST, visit our <a href="admissions.html">Admissions page</a> for requirements and the application process. The 2026/2027 intake is currently open!');
       } else if (lower.includes('program') || lower.includes('course') || lower.includes('study') || lower.includes('degree')) {
@@ -288,7 +425,7 @@ class TIBSTChatbot {
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: UNIVERSITY_CONTEXT },
+          { role: 'system', content: this.activeContext },
           { role: 'user', content: message }
         ],
         max_tokens: 300
@@ -310,7 +447,7 @@ class TIBSTChatbot {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 300,
-        system: UNIVERSITY_CONTEXT,
+        system: this.activeContext,
         messages: [{ role: 'user', content: message }]
       })
     });
