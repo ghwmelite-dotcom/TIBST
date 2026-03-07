@@ -1554,12 +1554,13 @@ textarea.form-input {
 
 .hero-cinematic-bg {
   position: absolute;
-  inset: 0;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
   background-size: cover;
   background-position: center;
-  opacity: 0.3;
+  opacity: 0.35;
   filter: saturate(0.6);
-  transform: scale(1.05);
   animation: heroZoom 20s ease-in-out infinite alternate;
 }
 
@@ -1572,8 +1573,8 @@ textarea.form-input {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(5,5,5,0.7) 40%, rgba(78,155,23,0.15) 100%),
-    linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 40%);
+    linear-gradient(135deg, rgba(0,0,0,0.88) 0%, rgba(5,5,5,0.65) 50%, rgba(5,5,5,0.75) 100%),
+    linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%);
 }
 
 .hero-cinematic-grain {
