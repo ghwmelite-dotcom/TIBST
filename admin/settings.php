@@ -14,6 +14,7 @@ $pdo = getDB();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validateCsrf();
 
+    $currentSettings = getSettings();
     $submitted = $_POST['settings'] ?? [];
 
     foreach ($submitted as $key => $value) {
@@ -28,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $path = uploadImage($key);
             if ($path !== false) {
                 // Delete old file if it exists
-                $oldVal = $settings[$key] ?? '';
+                $oldVal = $currentSettings[$key] ?? '';
                 if ($oldVal && file_exists(dirname(__DIR__) . '/' . $oldVal)) {
                     @unlink(dirname(__DIR__) . '/' . $oldVal);
                 }
