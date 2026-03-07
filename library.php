@@ -223,11 +223,15 @@ $categories = array_keys($library);
           $modified   = isset($file['modifiedTime']) ? date('M j, Y', strtotime($file['modifiedTime'])) : '';
           $fileName   = pathinfo($file['name'], PATHINFO_FILENAME);
         ?>
-        <a href="library-viewer.php?id=<?= urlencode($file['id']) ?>&type=<?= urlencode($file['mimeType'] ?? '') ?>&name=<?= urlencode($fileName) ?>"
+        <a href="#"
            class="lib-card fade-up"
            data-type="<?= $badgeClass ?>"
            data-category="<?= escape($catSlug) ?>"
-           data-name="<?= escape(strtolower($file['name'])) ?>">
+           data-name="<?= escape(strtolower($file['name'])) ?>"
+           data-preview-url="<?= escape(getGDrivePreviewUrl($file['id'], $file['mimeType'] ?? '')) ?>"
+           data-doc-name="<?= escape($fileName) ?>"
+           data-doc-type="<?= escape($fileType) ?>"
+           data-badge-class="<?= $badgeClass ?>">
           <div class="lib-card-icon lib-icon-<?= $badgeClass ?>">
             <?php if ($badgeClass === 'pdf'): ?>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -267,6 +271,29 @@ $categories = array_keys($library);
     <?php endif; ?>
   </div>
 </section>
+
+<!-- ===== DOCUMENT PREVIEW MODAL ===== -->
+<div class="lib-modal" id="lib-modal">
+  <div class="lib-modal__overlay"></div>
+  <div class="lib-modal__container">
+    <div class="lib-modal__header">
+      <div class="lib-modal__title-wrap">
+        <span class="lib-badge" id="lib-modal-badge"></span>
+        <h3 class="lib-modal__title" id="lib-modal-title"></h3>
+      </div>
+      <button class="lib-modal__close" id="lib-modal-close" title="Close (Esc)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="lib-modal__body">
+      <div class="lib-modal__loading" id="lib-modal-loading">
+        <div class="lib-modal__spinner"></div>
+        <p>Loading document&hellip;</p>
+      </div>
+      <iframe class="lib-modal__iframe" id="lib-modal-iframe" sandbox="allow-scripts allow-same-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
 <?php endif; ?>
 
 <script>
@@ -308,7 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ok) { vis++; catVisible++; }
       });
 
-      // Hide entire category section if no cards visible
       cat.style.display = catVisible > 0 ? '' : 'none';
     });
 
@@ -325,6 +351,56 @@ document.addEventListener('DOMContentLoaded', () => {
       activeFilter = btn.dataset.filter;
       filterDocs();
     });
+  });
+
+  // ─── Document Preview Modal ────────────────────────────────────
+  const modal   = document.getElementById('lib-modal');
+  const iframe  = document.getElementById('lib-modal-iframe');
+  const title   = document.getElementById('lib-modal-title');
+  const badge   = document.getElementById('lib-modal-badge');
+  const loading = document.getElementById('lib-modal-loading');
+  const closeBtn = document.getElementById('lib-modal-close');
+  const overlay  = modal?.querySelector('.lib-modal__overlay');
+
+  function openModal(card) {
+    const url      = card.dataset.previewUrl;
+    const name     = card.dataset.docName;
+    const type     = card.dataset.docType;
+    const cls      = card.dataset.badgeClass;
+
+    title.textContent = name;
+    badge.textContent = type;
+    badge.className   = 'lib-badge lib-badge-' + cls;
+
+    loading.style.display = '';
+    iframe.style.opacity  = '0';
+    iframe.src = url;
+    iframe.onload = () => {
+      loading.style.display = 'none';
+      iframe.style.opacity  = '1';
+    };
+
+    modal.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    document.body.style.overflow = '';
+    iframe.src = 'about:blank';
+  }
+
+  allCards.forEach(card => {
+    card.addEventListener('click', e => {
+      e.preventDefault();
+      openModal(card);
+    });
+  });
+
+  closeBtn?.addEventListener('click', closeModal);
+  overlay?.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal?.classList.contains('is-open')) closeModal();
   });
 });
 </script>
