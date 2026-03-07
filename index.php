@@ -115,88 +115,60 @@ $latestNews   = getPublishedNews(3);
   </section>
 
   <!-- ========== PROGRAMMES ========== -->
-  <section class="programmes-section">
-    <div class="container" style="padding-bottom:0;">
-      <div class="section-header fade-up" style="padding-top:100px;">
+  <section class="section programmes-section">
+    <div class="container">
+      <div class="section-header fade-up">
         <div class="section-label">Academic Excellence</div>
         <h2 class="section-title">Our Programmes</h2>
         <p class="section-subtitle">Cutting-edge postgraduate programmes designed to push the boundaries of biomedical science and technology.</p>
       </div>
-    </div>
 
-    <div class="prog-tiles">
-<?php if (!empty($programmes)): ?>
-        <?php foreach ($programmes as $i => $prog): ?>
-        <article class="prog-tile fade-up fade-up-delay-<?= min($i, 2) ?>">
-          <div class="prog-tile-img" style="background-image: url('<?= $prog['image'] ? escape($prog['image']) : ($i === 0 ? 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80' : ($i === 1 ? 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=900&q=80' : 'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=900&q=80')) ?>');"></div>
-          <div class="prog-tile-overlay"></div>
-          <span class="prog-tile-num"><?= str_pad($i + 1, 2, '0', STR_PAD_LEFT) ?></span>
-          <div class="prog-tile-content">
-            <span class="prog-tile-badge"><?= escape($prog['degree_type']) ?></span>
-            <h3 class="prog-tile-title"><?= escape($prog['title']) ?></h3>
-            <p class="prog-tile-desc"><?= escape($prog['description']) ?></p>
-            <div class="prog-tile-footer">
-              <span class="prog-tile-duration">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <div class="prog-grid-v5">
+<?php
+$defaultImages = [
+  'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=900&q=80',
+  'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=900&q=80',
+  'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=900&q=80',
+];
+$list = !empty($programmes) ? $programmes : [];
+if (empty($list)):
+  $list = [
+    ['degree_type'=>'MPhil','title'=>'Gene Therapy','description'=>'Explore cutting-edge gene therapy techniques and their applications in modern medicine. This programme prepares graduates for careers in genetic research and clinical gene therapy.','duration'=>'2 years','image'=>null],
+    ['degree_type'=>'PhD','title'=>'Gene Therapy','description'=>'Conduct advanced research in gene therapy, contributing original knowledge to the field. This doctoral programme is designed for candidates seeking to lead innovation in genetic medicine.','duration'=>'3-4 years','image'=>null],
+    ['degree_type'=>'MPhil','title'=>'Human Embryology','description'=>'Study the science of human embryonic development and reproductive biology. This programme equips students with expertise in embryology research and assisted reproduction technologies.','duration'=>'2 years','image'=>null],
+  ];
+endif;
+foreach ($list as $i => $prog):
+  $img = !empty($prog['image']) ? escape($prog['image']) : ($defaultImages[$i % count($defaultImages)]);
+?>
+        <article class="prog-card-v5 fade-up fade-up-delay-<?= min($i, 2) ?>">
+          <div class="prog-card-v5-img-wrap">
+            <div class="prog-card-v5-img" style="background-image: url('<?= $img ?>');"></div>
+            <span class="prog-card-v5-degree"><?= escape($prog['degree_type']) ?></span>
+          </div>
+          <div class="prog-card-v5-body">
+            <h3 class="prog-card-v5-title"><?= escape($prog['title']) ?></h3>
+            <p class="prog-card-v5-desc"><?= escape($prog['description']) ?></p>
+            <div class="prog-card-v5-meta">
+              <div class="prog-card-v5-detail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <?= escape($prog['duration']) ?>
-              </span>
-              <a href="admissions.php" class="prog-tile-apply">Apply Now <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+              <div class="prog-card-v5-detail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/></svg>
+                Postgraduate
+              </div>
             </div>
+            <a href="admissions.php" class="prog-card-v5-btn">
+              Apply Now
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
           </div>
-          <div class="prog-tile-glow"></div>
         </article>
-        <?php endforeach; ?>
-<?php else: ?>
-        <article class="prog-tile fade-up">
-          <div class="prog-tile-img" style="background-image: url('https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80');"></div>
-          <div class="prog-tile-overlay"></div>
-          <span class="prog-tile-num">01</span>
-          <div class="prog-tile-content">
-            <span class="prog-tile-badge">MPhil</span>
-            <h3 class="prog-tile-title">Gene Therapy</h3>
-            <p class="prog-tile-desc">Explore cutting-edge gene therapy techniques and their applications in modern medicine. This programme prepares graduates for careers in genetic research.</p>
-            <div class="prog-tile-footer">
-              <span class="prog-tile-duration"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 2 Years</span>
-              <a href="admissions.php" class="prog-tile-apply">Apply Now <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-            </div>
-          </div>
-          <div class="prog-tile-glow"></div>
-        </article>
-        <article class="prog-tile fade-up fade-up-delay-1">
-          <div class="prog-tile-img" style="background-image: url('https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=900&q=80');"></div>
-          <div class="prog-tile-overlay"></div>
-          <span class="prog-tile-num">02</span>
-          <div class="prog-tile-content">
-            <span class="prog-tile-badge">PhD</span>
-            <h3 class="prog-tile-title">Gene Therapy</h3>
-            <p class="prog-tile-desc">Conduct advanced research in gene therapy, contributing original knowledge to the field of genetic medicine and clinical translation.</p>
-            <div class="prog-tile-footer">
-              <span class="prog-tile-duration"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 3-4 Years</span>
-              <a href="admissions.php" class="prog-tile-apply">Apply Now <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-            </div>
-          </div>
-          <div class="prog-tile-glow"></div>
-        </article>
-        <article class="prog-tile fade-up fade-up-delay-2">
-          <div class="prog-tile-img" style="background-image: url('https://images.unsplash.com/photo-1576086213369-97a306d36557?w=900&q=80');"></div>
-          <div class="prog-tile-overlay"></div>
-          <span class="prog-tile-num">03</span>
-          <div class="prog-tile-content">
-            <span class="prog-tile-badge">MPhil</span>
-            <h3 class="prog-tile-title">Human Embryology</h3>
-            <p class="prog-tile-desc">Study the science of human embryonic development and reproductive biology with our comprehensive research programme.</p>
-            <div class="prog-tile-footer">
-              <span class="prog-tile-duration"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 2 Years</span>
-              <a href="admissions.php" class="prog-tile-apply">Apply Now <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-            </div>
-          </div>
-          <div class="prog-tile-glow"></div>
-        </article>
-<?php endif; ?>
-    </div>
+<?php endforeach; ?>
+      </div>
 
-    <div class="container">
-      <div style="text-align:center; padding:52px 0 100px;">
+      <div style="text-align:center; margin-top:48px;">
         <a href="academics.php" class="btn btn-outline-dark fade-up">View All Programmes <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
     </div>
