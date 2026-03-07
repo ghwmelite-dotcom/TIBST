@@ -84,7 +84,7 @@ $latestNews   = getPublishedNews(3);
     </div>
   </section>
 
-  <!-- PROGRAMMES — Card Grid -->
+  <!-- PROGRAMMES — Editorial Showcase -->
   <section class="section programmes-section">
     <div class="container">
       <div class="section-header fade-up">
@@ -93,13 +93,43 @@ $latestNews   = getPublishedNews(3);
         <p class="section-subtitle">Cutting-edge postgraduate programmes designed to push the boundaries of biomedical science and technology.</p>
       </div>
 
-      <div class="prog-grid">
 <?php if (!empty($programmes)): ?>
-        <?php foreach ($programmes as $i => $prog): ?>
+      <?php $featured = $programmes[0]; ?>
+      <!-- Featured Programme -->
+      <div class="prog-featured fade-up">
+        <div class="prog-featured-img" style="background-image: url('<?= $featured['image'] ? escape($featured['image']) : 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80' ?>');">
+          <div class="prog-featured-img-overlay"></div>
+          <span class="prog-featured-index">01</span>
+        </div>
+        <div class="prog-featured-content">
+          <span class="prog-featured-badge"><?= escape($featured['degree_type']) ?></span>
+          <h3 class="prog-featured-title"><?= escape($featured['title']) ?></h3>
+          <p class="prog-featured-desc"><?= escape($featured['description']) ?></p>
+          <div class="prog-featured-details">
+            <div class="prog-featured-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span><?= escape($featured['duration']) ?></span>
+            </div>
+            <div class="prog-featured-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/></svg>
+              <span>Postgraduate</span>
+            </div>
+          </div>
+          <a href="admissions.php" class="btn btn-primary" style="margin-top:28px;">Apply for This Programme <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+
+      <!-- Remaining Programmes -->
+      <?php if (count($programmes) > 1): ?>
+      <div class="prog-grid">
+        <?php foreach (array_slice($programmes, 1) as $i => $prog): ?>
         <article class="prog-card fade-up fade-up-delay-<?= min($i, 3) ?>">
-          <div class="prog-card-img" style="background-image: url('<?= $prog['image'] ? escape($prog['image']) : 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&q=80' ?>');">
-            <div class="prog-card-img-overlay"></div>
+          <div class="prog-card-visual">
+            <div class="prog-card-img" style="background-image: url('<?= $prog['image'] ? escape($prog['image']) : 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&q=80' ?>');">
+              <div class="prog-card-img-overlay"></div>
+            </div>
             <span class="prog-card-badge"><?= escape($prog['degree_type']) ?></span>
+            <span class="prog-card-index"><?= str_pad($i + 2, 2, '0', STR_PAD_LEFT) ?></span>
           </div>
           <div class="prog-card-body">
             <h3 class="prog-card-title"><?= escape($prog['title']) ?></h3>
@@ -114,15 +144,47 @@ $latestNews   = getPublishedNews(3);
           </div>
         </article>
         <?php endforeach; ?>
+      </div>
+      <?php endif; ?>
+
 <?php else: ?>
+      <!-- Static Fallback — Featured -->
+      <div class="prog-featured fade-up">
+        <div class="prog-featured-img" style="background-image: url('https://images.unsplash.com/photo-1579154204601-01588f351e67?w=1200&q=80');">
+          <div class="prog-featured-img-overlay"></div>
+          <span class="prog-featured-index">01</span>
+        </div>
+        <div class="prog-featured-content">
+          <span class="prog-featured-badge">MPhil</span>
+          <h3 class="prog-featured-title">Gene Therapy</h3>
+          <p class="prog-featured-desc">Explore the frontier of genetic medicine with our comprehensive MPhil programme in Gene Therapy, combining theoretical foundations with hands-on laboratory research.</p>
+          <div class="prog-featured-details">
+            <div class="prog-featured-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>2-3 Years</span>
+            </div>
+            <div class="prog-featured-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/></svg>
+              <span>Postgraduate</span>
+            </div>
+          </div>
+          <a href="admissions.php" class="btn btn-primary" style="margin-top:28px;">Apply for This Programme <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+
+      <!-- Static Fallback — Grid -->
+      <div class="prog-grid">
         <article class="prog-card fade-up">
-          <div class="prog-card-img" style="background-image: url('https://images.unsplash.com/photo-1579154204601-01588f351e67?w=600&q=80');">
-            <div class="prog-card-img-overlay"></div>
-            <span class="prog-card-badge">MPhil</span>
+          <div class="prog-card-visual">
+            <div class="prog-card-img" style="background-image: url('https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&q=80');">
+              <div class="prog-card-img-overlay"></div>
+            </div>
+            <span class="prog-card-badge">PhD</span>
+            <span class="prog-card-index">02</span>
           </div>
           <div class="prog-card-body">
             <h3 class="prog-card-title">Gene Therapy</h3>
-            <p class="prog-card-desc">Explore the frontier of genetic medicine with our comprehensive MPhil programme in Gene Therapy, combining theoretical foundations with hands-on laboratory research.</p>
+            <p class="prog-card-desc">Advance the frontiers of gene therapy research with our doctoral programme, focusing on innovative therapeutic approaches and clinical translation.</p>
             <div class="prog-card-meta">
               <span class="prog-card-duration">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -133,30 +195,16 @@ $latestNews   = getPublishedNews(3);
           </div>
         </article>
         <article class="prog-card fade-up fade-up-delay-1">
-          <div class="prog-card-img" style="background-image: url('https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=600&q=80');">
-            <div class="prog-card-img-overlay"></div>
-            <span class="prog-card-badge">PhD</span>
-          </div>
-          <div class="prog-card-body">
-            <h3 class="prog-card-title">Gene Therapy</h3>
-            <p class="prog-card-desc">Advance the frontiers of gene therapy research with our doctoral programme, focusing on innovative therapeutic approaches.</p>
-            <div class="prog-card-meta">
-              <span class="prog-card-duration">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                2-3 Years
-              </span>
-              <a href="admissions.php" class="prog-card-apply">Apply &rarr;</a>
+          <div class="prog-card-visual">
+            <div class="prog-card-img" style="background-image: url('https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&q=80');">
+              <div class="prog-card-img-overlay"></div>
             </div>
-          </div>
-        </article>
-        <article class="prog-card fade-up fade-up-delay-2">
-          <div class="prog-card-img" style="background-image: url('https://images.unsplash.com/photo-1576086213369-97a306d36557?w=600&q=80');">
-            <div class="prog-card-img-overlay"></div>
             <span class="prog-card-badge">MPhil</span>
+            <span class="prog-card-index">03</span>
           </div>
           <div class="prog-card-body">
             <h3 class="prog-card-title">Human Embryology</h3>
-            <p class="prog-card-desc">Study human development with our MPhil programme, integrating embryology with modern reproductive sciences.</p>
+            <p class="prog-card-desc">Study human development with our MPhil programme, integrating embryology with modern reproductive sciences and clinical practice.</p>
             <div class="prog-card-meta">
               <span class="prog-card-duration">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -166,10 +214,10 @@ $latestNews   = getPublishedNews(3);
             </div>
           </div>
         </article>
-<?php endif; ?>
       </div>
+<?php endif; ?>
 
-      <div style="text-align:center; margin-top:48px;">
+      <div style="text-align:center; margin-top:56px;">
         <a href="academics.php" class="btn btn-outline-dark fade-up">View All Programmes <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
     </div>
