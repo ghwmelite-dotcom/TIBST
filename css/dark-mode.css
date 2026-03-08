@@ -111,6 +111,168 @@
   color: #8dd35f;
 }
 
+/* --- White-on-Color Text Fixes ---
+   Elements using var(--white) as TEXT color on colored backgrounds
+   break because --white inverts to #111 in dark mode. Force #fff. */
+
+/* Programme cards (green overlay) */
+[data-theme="dark"] .prog-card-v6-title,
+[data-theme="dark"] .prog-card-v6-link,
+[data-theme="dark"] .prog-card-v6-link:hover {
+  color: #fff;
+}
+[data-theme="dark"] .prog-card-v6-link {
+  border-bottom-color: rgba(255,255,255,0.5);
+}
+[data-theme="dark"] .prog-card-v6-link:hover {
+  border-bottom-color: #fff;
+}
+
+/* Bento wide card (dark green gradient) */
+[data-theme="dark"] .bento-wide h3 {
+  color: #fff;
+}
+
+/* Bento tall card icon */
+[data-theme="dark"] .bento-tall .feature-card-v4-icon {
+  color: #fff;
+}
+
+/* Feature card icon on hover (green bg) */
+[data-theme="dark"] .feature-card-v4:hover .feature-card-v4-icon {
+  color: #fff;
+}
+
+/* CTA band heading & buttons */
+[data-theme="dark"] .cta-band-content h2 {
+  color: #fff;
+}
+[data-theme="dark"] .btn-white {
+  background: #fff;
+  color: var(--primary-dark);
+}
+[data-theme="dark"] .btn-white:hover {
+  background: #f0f0f0;
+}
+[data-theme="dark"] .btn-outline-white {
+  color: #fff;
+  border-color: rgba(255,255,255,0.4);
+}
+[data-theme="dark"] .btn-outline-white:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+/* Testimonial avatar initials (green circle) */
+[data-theme="dark"] .testimonial-card-v4-avatar {
+  color: #fff;
+}
+
+/* Section title (uses --secondary which is fine, but reinforce) */
+[data-theme="dark"] .section-title {
+  color: #f0f0f0;
+}
+
+/* Section subtitle — boost contrast */
+[data-theme="dark"] .section-subtitle {
+  color: #b0b0b0;
+}
+
+/* News card title & excerpt */
+[data-theme="dark"] .news-card-v4-title {
+  color: #f0f0f0;
+}
+[data-theme="dark"] .news-card-v4-excerpt {
+  color: #aaa;
+}
+
+/* Bento card headings & text */
+[data-theme="dark"] .bento-card h3 {
+  color: #f0f0f0;
+}
+[data-theme="dark"] .bento-card p {
+  color: #aaa;
+}
+
+/* Feature card text in Why TIBST */
+[data-theme="dark"] .feature-card-v4 h3 {
+  color: #f0f0f0;
+}
+[data-theme="dark"] .feature-card-v4 p {
+  color: #aaa;
+}
+
+/* Testimonial card text */
+[data-theme="dark"] .testimonial-card-v4-text {
+  color: #ccc;
+}
+[data-theme="dark"] .testimonial-card-v4-author strong {
+  color: #f0f0f0;
+}
+[data-theme="dark"] .testimonial-card-v4-author span {
+  color: #999;
+}
+
+/* Hero section text on dark bg */
+[data-theme="dark"] .uni-hero-h1 span,
+[data-theme="dark"] .uni-hero-h1 em {
+  color: #fff;
+}
+[data-theme="dark"] .uni-hero-subtitle {
+  color: rgba(255,255,255,0.85);
+}
+
+/* Quick bar text */
+[data-theme="dark"] .quick-bar-label {
+  color: #fff;
+}
+[data-theme="dark"] .quick-bar-sub {
+  color: rgba(255,255,255,0.65);
+}
+
+/* Stats band (already uses hardcoded rgba but reinforce) */
+[data-theme="dark"] .stats-band-label {
+  color: rgba(255,255,255,0.7);
+}
+
+/* Footer link text visibility */
+[data-theme="dark"] .footer-links a {
+  color: #bbb;
+}
+[data-theme="dark"] .footer-links a:hover {
+  color: #fff;
+}
+[data-theme="dark"] .footer h4 {
+  color: #f0f0f0;
+}
+[data-theme="dark"] .footer-brand p {
+  color: #aaa;
+}
+[data-theme="dark"] .footer-bottom {
+  color: #888;
+}
+
+/* Contact info in footer */
+[data-theme="dark"] .footer-links li {
+  color: #bbb;
+}
+
+/* Newsletter input */
+[data-theme="dark"] .footer-newsletter input {
+  background: #1a1a1a;
+  border-color: rgba(255,255,255,0.15);
+  color: #eee;
+}
+
+/* Dropdown menu links */
+[data-theme="dark"] .dropdown-menu a {
+  color: #ccc;
+}
+[data-theme="dark"] .dropdown-menu a:hover {
+  color: #fff;
+  background: rgba(78,155,23,0.15);
+}
+
 /* --- Dark Mode Toggle Button --- */
 .dark-mode-toggle {
   width: 44px;
